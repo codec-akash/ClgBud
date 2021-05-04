@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "902549874732",
+    "project_id": "clgbud",
+    "storage_bucket": "clgbud.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:902549874732:android:8604dd30ca8ca4041a4989",
+        "android_client_info": {
+          "package_name": "com.crickash.clgbud"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "902549874732-6l2qlctlf497o7deoj4u2sg6ph6jeu8b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.crickash.clgbud",
+            "certificate_hash": "ff831ccaf2662a0c8b3a9a44c01d6c548d3c2d02"
+          }
+        },
+        {
+          "client_id": "902549874732-fa22hoflnkrdh9dco8r8dan2dcd3v1em.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_jZ9YhrZwMY3zBpkKNKNk_deFZ6ijK6o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "902549874732-fa22hoflnkrdh9dco8r8dan2dcd3v1em.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

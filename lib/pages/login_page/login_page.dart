@@ -1,3 +1,4 @@
+import 'package:clgbud/services/auth.dart';
 import 'package:clgbud/utils/app_media_query.dart';
 import 'package:clgbud/utils/global.dart';
 import 'package:flutter/cupertino.dart';
@@ -81,7 +82,9 @@ class _LoginPageState extends State<LoginPage> {
                   color: Theme.of(context).accentColor,
                   textColor: Colors.white,
                   child: Text("Google"),
-                  onPressed: () {},
+                  onPressed: () async {
+                    await AuthService().signINWithGoogle();
+                  },
                 ),
               ),
               SizedBox(height: 10.0),

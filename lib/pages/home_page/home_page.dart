@@ -1,5 +1,4 @@
-import 'dart:html';
-
+import 'package:clgbud/services/auth.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -11,10 +10,19 @@ class HomePage extends StatelessWidget {
         title: Text("HOmePage"),
       ),
       backgroundColor: Theme.of(context).backgroundColor,
-      body: Container(
-        child: Center(
-          child: Text("HOmePage"),
-        ),
+      body: Column(
+        children: [
+          Container(
+            child: Center(
+              child: Text("HOmePage"),
+            ),
+          ),
+          RaisedButton(
+            onPressed: () {
+              AuthService().signout();
+            },
+          )
+        ],
       ),
     );
   }

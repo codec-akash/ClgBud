@@ -18,7 +18,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: ThemeNotifier()),
+        ChangeNotifierProvider(create: (ctx) => ThemeNotifier()),
+        ChangeNotifierProvider(create: (ctx) => AuthService()),
       ],
       child: Consumer<ThemeNotifier>(
         builder: (context, theme, child) => MaterialApp(
@@ -30,8 +31,10 @@ class MyApp extends StatelessWidget {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Text("Loadi");
                 } else if (snapshot.hasData) {
-                  print("has Data");
                   return HomePage();
+                }
+                if (snapshot.hasError) {
+                  print(snapshot.error);
                 }
                 return LoginPage();
               }),

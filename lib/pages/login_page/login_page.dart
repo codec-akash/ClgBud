@@ -1,8 +1,11 @@
 import 'package:clgbud/services/auth.dart';
 import 'package:clgbud/utils/app_media_query.dart';
 import 'package:clgbud/utils/global.dart';
+import 'package:clgbud/utils/http_exception.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class LoginPage extends StatefulWidget {
@@ -11,9 +14,33 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  TextEditingController _phoneController = TextEditingController();
+  final _scaffold = GlobalKey<ScaffoldState>();
+
+  Future<void> _submit() async {
+    try {
+      await AuthService()
+          .signINWithPhone(_phoneController.text, context, showErrorMessage);
+      // _scaffold.currentState.showSnackBar(SnackBar(content: Text(message)));
+    } on HttpException catch (e) {
+      print("reacehd $e");
+    } catch (e) {
+      print("REached HEre");
+      _scaffold.currentState
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
+
+  void showErrorMessage(String message) {
+    // String message =
+    //     Provider.of<AuthService>(context, listen: false).statusmessage;
+    _scaffold.currentState.showSnackBar(SnackBar(content: Text(message)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffold,
       appBar: AppBar(
         elevation: 0.0,
         title: Shimmer.fromColors(
@@ -53,9 +80,10 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 decoration: BoxDecoration(boxShadow: Global().boxShadow),
                 child: TextFormField(
+                  controller: _phoneController,
                   decoration: Global().textFieldDecoration.copyWith(
                       suffixIcon: Icon(Icons.phone), hintText: 'Phone Number'),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.phone,
                 ),
               ),
               SizedBox(height: AppMediaQuery(context).appHeight(10.0)),
@@ -68,7 +96,9 @@ class _LoginPageState extends State<LoginPage> {
                   color: Theme.of(context).accentColor,
                   textColor: Colors.white,
                   child: Text("Login"),
-                  onPressed: () {},
+                  onPressed: () async {
+                    await _submit();
+                  },
                 ),
               ),
               SizedBox(height: 10.0),

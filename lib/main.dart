@@ -1,6 +1,7 @@
 import 'package:clgbud/pages/home_page/home_page.dart';
 import 'package:clgbud/pages/login_page/login_page.dart';
 import 'package:clgbud/services/auth.dart';
+import 'package:clgbud/services/user_database.dart';
 import 'package:clgbud/utils/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,8 +19,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (ctx) => ThemeNotifier()),
-        ChangeNotifierProvider(create: (ctx) => AuthService()),
+        ChangeNotifierProvider(create: (_) => ThemeNotifier()),
+        ChangeNotifierProvider(create: (_) => AuthService()),
+        ChangeNotifierProvider(create: (_) => UserDataBase()),
       ],
       child: Consumer<ThemeNotifier>(
         builder: (context, theme, child) => MaterialApp(

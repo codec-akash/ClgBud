@@ -1,3 +1,4 @@
+import 'package:clgbud/services/user_database.dart';
 import 'package:clgbud/utils/global.dart';
 import 'package:clgbud/utils/http_exception.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,17 +9,23 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthService with ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   String status;
+  String userId;
   bool _isnewUser = false;
+  bool _isLoading = false;
 
   String get statusmessage => status;
 
   Stream get user {
+    if (_firebaseAuth.currentUser != null) {
+      userId = _firebaseAuth.currentUser.uid;
+    }
     return _firebaseAuth.authStateChanges();
   }
 
   bool get isNewUser => _isnewUser;
 
   Future signINWithGoogle() async {
+    _isLoading = true;
     try {
       GoogleSignIn googleSignIn = GoogleSignIn();
       final GoogleSignInAccount googleSignInAccount =
@@ -32,7 +39,17 @@ class AuthService with ChangeNotifier {
 
       UserCredential userCredential =
           await _firebaseAuth.signInWithCredential(oAuthCredential);
+      if (userCredential.additionalUserInfo.isNewUser) {
+        UserDataBase().initialiseUser(
+          phoneNumber: userCredential.user.phoneNumber,
+          isUserComplete: false,
+          userId: userCredential.user.uid,
+        );
+      }
+      userId = userCredential.user.uid;
+      _isLoading = false;
     } catch (e) {
+      _isLoading = false;
       print(e.toString());
     }
   }
@@ -41,6 +58,7 @@ class AuthService with ChangeNotifier {
       String phoneNumber, BuildContext context, Function showErrorMsg) async {
     TextEditingController _codeController = TextEditingController();
     try {
+      _isLoading = true;
       await _firebaseAuth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
         timeout: Duration(seconds: 60),
@@ -49,14 +67,25 @@ class AuthService with ChangeNotifier {
           try {
             UserCredential userCredential =
                 await _firebaseAuth.signInWithCredential(credential);
+            if (userCredential.additionalUserInfo.isNewUser) {
+              UserDataBase().initialiseUser(
+                phoneNumber: userCredential.user.phoneNumber,
+                isUserComplete: false,
+                userId: userCredential.user.uid,
+              );
+            }
+            userId = userCredential.user.uid;
+            _isLoading = false;
           } catch (e) {
             status = "Error Occured while sign -in";
+            _isLoading = false;
           }
         },
         verificationFailed: (FirebaseAuthException e) {
           print("Fialed");
           status = e.message;
           showErrorMsg(e.message);
+          _isLoading = false;
           throw HttpException(e.message);
         },
         codeSent: (verificationId, forceResendingToken) {
@@ -88,8 +117,17 @@ class AuthService with ChangeNotifier {
                         );
                         UserCredential userCredential = await _firebaseAuth
                             .signInWithCredential(authCredential);
-                        // print(userCredential.user.phoneNumber);
+                        if (userCredential.additionalUserInfo.isNewUser) {
+                          UserDataBase().initialiseUser(
+                            phoneNumber: userCredential.user.phoneNumber,
+                            isUserComplete: false,
+                            userId: userCredential.user.uid,
+                          );
+                        }
+                        userId = userCredential.user.uid;
+                        _isLoading = false;
                       } catch (e) {
+                        _isLoading = false;
                         showErrorMsg(e.toString());
                         print("REached HEre code");
                       }
@@ -98,6 +136,7 @@ class AuthService with ChangeNotifier {
                   FlatButton(
                     child: Text("Cancel"),
                     onPressed: () {
+                      _isLoading = false;
                       Navigator.of(context).pop();
                     },
                   ),

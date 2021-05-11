@@ -1,4 +1,5 @@
 import 'package:clgbud/services/auth.dart';
+import 'package:clgbud/services/user_database.dart';
 import 'package:clgbud/utils/app_media_query.dart';
 import 'package:clgbud/utils/global.dart';
 import 'package:clgbud/utils/http_exception.dart';
@@ -19,9 +20,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _submit() async {
     try {
-      await AuthService()
+      await Provider.of<AuthService>(context, listen: false)
           .signINWithPhone(_phoneController.text, context, showErrorMessage);
-      // _scaffold.currentState.showSnackBar(SnackBar(content: Text(message)));
     } on HttpException catch (e) {
       print("reacehd $e");
     } catch (e) {
@@ -32,8 +32,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void showErrorMessage(String message) {
-    // String message =
-    //     Provider.of<AuthService>(context, listen: false).statusmessage;
     _scaffold.currentState.showSnackBar(SnackBar(content: Text(message)));
   }
 

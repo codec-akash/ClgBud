@@ -1,5 +1,8 @@
-import 'package:clgbud/services/auth.dart';
+import 'package:clgbud/pages/home_page/drawer_screen.dart';
+import 'package:clgbud/pages/home_page/home_screen.dart';
+import 'package:clgbud/services/user_database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -10,28 +13,17 @@ class _HomePageState extends State<HomePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    print("ReachedDidChange");
+    Provider.of<UserDataBase>(context, listen: false).saveUserData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0.0,
-        title: Text("HOmePage"),
-      ),
-      backgroundColor: Theme.of(context).backgroundColor,
-      body: Column(
+      body: Stack(
         children: [
-          Container(
-            child: Center(
-              child: Text("HOmePage"),
-            ),
-          ),
-          RaisedButton(
-            onPressed: () {
-              AuthService().signout();
-            },
-          )
+          DrawerScreen(),
+          HomeScreen(),
         ],
       ),
     );

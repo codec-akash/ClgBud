@@ -41,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
       duration: Duration(milliseconds: 250),
       decoration: BoxDecoration(
         color: Theme.of(context).backgroundColor,
+        borderRadius: BorderRadius.circular(_isDrawerOpen ? 20.0 : 0.0),
       ),
       child: SafeArea(
         child: Column(

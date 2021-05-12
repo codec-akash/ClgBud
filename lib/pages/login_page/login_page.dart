@@ -17,17 +17,19 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController _phoneController = TextEditingController();
   final _scaffold = GlobalKey<ScaffoldState>();
+  final _formKey = GlobalKey<FormState>();
 
   Future<void> _submit() async {
-    try {
-      await Provider.of<AuthService>(context, listen: false)
-          .signINWithPhone(_phoneController.text, context, showErrorMessage);
-    } on HttpException catch (e) {
-      print("reacehd $e");
-    } catch (e) {
-      print("REached HEre");
-      _scaffold.currentState
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+    if (_formKey.currentState.validate()) {
+      try {
+        await Provider.of<AuthService>(context, listen: false)
+            .signINWithPhone(_phoneController.text, context, showErrorMessage);
+      } on HttpException catch (e) {
+        print("reacehd $e");
+      } catch (e) {
+        _scaffold.currentState
+            .showSnackBar(SnackBar(content: Text(e.toString())));
+      }
     }
   }
 
@@ -75,45 +77,71 @@ class _LoginPageState extends State<LoginPage> {
                 child: Image.asset("images/login_image.png"),
               ),
               SizedBox(height: AppMediaQuery(context).appHeight(5.0)),
-              Container(
-                decoration: BoxDecoration(boxShadow: Global().boxShadow),
-                child: TextFormField(
-                  controller: _phoneController,
-                  decoration: Global().textFieldDecoration.copyWith(
-                      suffixIcon: Icon(Icons.phone), hintText: 'Phone Number'),
-                  keyboardType: TextInputType.phone,
+              Form(
+                key: _formKey,
+                child: Container(
+                  decoration: BoxDecoration(boxShadow: Global().boxShadow),
+                  child: TextFormField(
+                    controller: _phoneController,
+                    decoration: Global().textFieldDecoration.copyWith(
+                        suffixIcon: Icon(Icons.phone),
+                        hintText: 'Phone Number',
+                        prefix: Text("+91 ")),
+                    validator: (value) {
+                      if (value.length < 10) {
+                        return "Enter a valid number";
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.phone,
+                  ),
                 ),
               ),
               SizedBox(height: AppMediaQuery(context).appHeight(10.0)),
-              Container(
-                width: double.infinity,
-                child: RaisedButton(
-                  padding: EdgeInsets.symmetric(vertical: 15.0),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: Global().borderRadius),
-                  color: Theme.of(context).accentColor,
-                  textColor: Colors.white,
-                  child: Text("Login"),
-                  onPressed: () async {
-                    await _submit();
-                  },
-                ),
-              ),
-              SizedBox(height: 10.0),
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(boxShadow: Global().boxShadowLowBlur),
-                child: RaisedButton(
-                  padding: EdgeInsets.symmetric(vertical: 15.0),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: Global().borderRadius),
-                  color: Theme.of(context).accentColor,
-                  textColor: Colors.white,
-                  child: Text("Google"),
-                  onPressed: () async {
-                    await AuthService().signINWithGoogle();
-                  },
-                ),
+              Consumer<AuthService>(
+                builder: (context, value, _) {
+                  return value.isLoading
+                      ? Container(
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      : Column(
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              child: RaisedButton(
+                                padding: EdgeInsets.symmetric(vertical: 15.0),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: Global().borderRadius),
+                                color: Theme.of(context).accentColor,
+                                textColor: Colors.white,
+                                child: Text("Login"),
+                                onPressed: () async {
+                                  await _submit();
+                                },
+                              ),
+                            ),
+                            SizedBox(height: 10.0),
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  boxShadow: Global().boxShadowLowBlur),
+                              child: RaisedButton(
+                                padding: EdgeInsets.symmetric(vertical: 15.0),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: Global().borderRadius),
+                                color: Theme.of(context).accentColor,
+                                textColor: Colors.white,
+                                child: Text("Google"),
+                                onPressed: () async {
+                                  await AuthService().signINWithGoogle();
+                                },
+                              ),
+                            ),
+                          ],
+                        );
+                },
               ),
               SizedBox(height: 10.0),
               Text(

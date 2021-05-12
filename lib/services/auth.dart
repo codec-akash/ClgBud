@@ -15,6 +15,8 @@ class AuthService with ChangeNotifier {
 
   String get statusmessage => status;
 
+  bool get isLoading => _isLoading;
+
   Stream get user {
     if (_firebaseAuth.currentUser != null) {
       userId = _firebaseAuth.currentUser.uid;
@@ -52,6 +54,7 @@ class AuthService with ChangeNotifier {
       _isLoading = false;
       print(e.toString());
     }
+    notifyListeners();
   }
 
   Future<void> signINWithPhone(
@@ -60,10 +63,9 @@ class AuthService with ChangeNotifier {
     try {
       _isLoading = true;
       await _firebaseAuth.verifyPhoneNumber(
-        phoneNumber: phoneNumber,
+        phoneNumber: "+91$phoneNumber",
         timeout: Duration(seconds: 60),
         verificationCompleted: (PhoneAuthCredential credential) async {
-          // Navigator.of(context).pop();
           try {
             UserCredential userCredential =
                 await _firebaseAuth.signInWithCredential(credential);
@@ -83,9 +85,9 @@ class AuthService with ChangeNotifier {
         },
         verificationFailed: (FirebaseAuthException e) {
           print("Fialed");
+          _isLoading = false;
           status = e.message;
           showErrorMsg(e.message);
-          _isLoading = false;
           throw HttpException(e.message);
         },
         codeSent: (verificationId, forceResendingToken) {
@@ -115,6 +117,7 @@ class AuthService with ChangeNotifier {
                           verificationId: verificationId,
                           smsCode: _codeController.text.trim(),
                         );
+                        _isLoading = false;
                         UserCredential userCredential = await _firebaseAuth
                             .signInWithCredential(authCredential);
                         if (userCredential.additionalUserInfo.isNewUser) {
@@ -125,7 +128,6 @@ class AuthService with ChangeNotifier {
                           );
                         }
                         userId = userCredential.user.uid;
-                        _isLoading = false;
                       } catch (e) {
                         _isLoading = false;
                         showErrorMsg(e.toString());
@@ -150,8 +152,10 @@ class AuthService with ChangeNotifier {
     } catch (e) {
       print("reached main catch");
       status = "Error Occured";
+      _isLoading = false;
       print(e);
     }
+    notifyListeners();
   }
 
   Future signout() async {

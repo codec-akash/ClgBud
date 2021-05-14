@@ -31,7 +31,7 @@ class ProductModel {
     category = json['category'];
     subject = json['subject'];
     isSold = json['isSold'];
-    amount = json['amount'];
+    amount = double.parse(json['amount'].toString());
     productImage = json['product_image'];
   }
 

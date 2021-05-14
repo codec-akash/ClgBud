@@ -1,7 +1,8 @@
-import 'package:clgbud/services/auth.dart';
-import 'package:clgbud/services/user_database.dart';
+import 'package:clgbud/model/product_model.dart';
+import 'package:clgbud/pages/home_page/product_list.dart';
+import 'package:clgbud/services/product_database.dart';
+import 'package:clgbud/utils/global.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -38,18 +39,22 @@ class _HomeScreenState extends State<HomeScreen> {
     return AnimatedContainer(
       transform: Matrix4.translationValues(xoffset, yoffset, 0)
         ..scale(scalefactor),
-      duration: Duration(milliseconds: 250),
+      duration: Duration(milliseconds: 350),
       decoration: BoxDecoration(
         color: Theme.of(context).backgroundColor,
         borderRadius: BorderRadius.circular(_isDrawerOpen ? 20.0 : 0.0),
       ),
-      child: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              child: Row(
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   IconButton(
+                    padding: const EdgeInsets.all(0.0),
                     icon: _isDrawerOpen
                         ? Icon(
                             Icons.chevron_left,
@@ -58,30 +63,34 @@ class _HomeScreenState extends State<HomeScreen> {
                         : Icon(Icons.menu),
                     onPressed: () => animateHomeScreen(),
                   ),
+                  SizedBox(width: 10.0),
+                  Text("ClgBud", style: Global().headingText),
                 ],
               ),
-            ),
-            Container(
-              child: Center(
-                child: Text("HOmePage"),
+              Global().height10Box,
+              Text(
+                "Items Available For Sale",
+                style: Global().headingText,
               ),
-            ),
-            Container(
-              // width: double.infinity,
-              child: RaisedButton(
-                child: Text("Signout"),
-                onPressed: () {
-                  AuthService().signout();
+              StreamBuilder<List<ProductModel>>(
+                stream: ProductDataBase().allProducts,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Text("Loading");
+                  }
+                  if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
+                  }
+                  if (snapshot.connectionState == ConnectionState.active) {
+                    return Expanded(
+                      child: ProductList(productList: snapshot.data),
+                    );
+                  }
+                  return Text("Loading");
                 },
-              ),
-            ),
-            RaisedButton(
-              child: Text("text"),
-              onPressed: () {
-                print(Provider.of<UserDataBase>(context, listen: false).userId);
-              },
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

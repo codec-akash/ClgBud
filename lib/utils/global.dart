@@ -12,6 +12,11 @@ class Global {
     fontWeight: FontWeight.bold,
   );
 
+  TextStyle textStyle = TextStyle(
+    fontSize: 14.0,
+    fontWeight: FontWeight.bold,
+  );
+
   InputDecoration textFieldDecoration = InputDecoration(
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),

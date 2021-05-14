@@ -220,9 +220,6 @@ class _AddProductState extends State<AddProduct> {
                         labelText: 'Item Description',
                       ),
                   validator: (value) {
-                    // if (value.length < 3) {
-                    //   return "Enter a valid name";
-                    // }
                     return null;
                   },
                   onChanged: (value) {

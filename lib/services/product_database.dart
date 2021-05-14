@@ -11,7 +11,15 @@ class ProductDataBase with ChangeNotifier {
 
   List<ProductModel> _products = [];
 
-  List<ProductModel> get products => _products;
+  Stream<List<ProductModel>> get allProducts {
+    return prodCollection.snapshots().map((event) => _productList(event));
+  }
+
+  List<ProductModel> _productList(QuerySnapshot snapshot) {
+    return snapshot.docs.map((product) {
+      return ProductModel.fromJson(product.data());
+    }).toList();
+  }
 
   Future addProduct(
       {ProductModel productModel, File productImage, String userId}) async {

@@ -1,3 +1,4 @@
+import 'package:clgbud/pages/add_product/add_product.dart';
 import 'package:clgbud/services/auth.dart';
 import 'package:clgbud/services/user_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,7 +23,7 @@ class DrawerScreen extends StatelessWidget {
           },
         ),
       ),
-      backgroundColor: Theme.of(context).accentColor,
+      // backgroundColor: Theme.of(context).accentColor,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
         child: Column(
@@ -44,7 +45,9 @@ class DrawerScreen extends StatelessWidget {
                   ListTile(
                     title: Text("Add Product"),
                     leading: Icon(Icons.add_circle_outline),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.of(context).pushNamed(AddProduct.routeName);
+                    },
                   ),
                   ListTile(
                     title: Text("Your Products"),

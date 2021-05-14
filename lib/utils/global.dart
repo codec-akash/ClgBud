@@ -7,6 +7,11 @@ class Global {
     fontWeight: FontWeight.bold,
   );
 
+  TextStyle buttonText = TextStyle(
+    fontSize: 18.0,
+    fontWeight: FontWeight.bold,
+  );
+
   InputDecoration textFieldDecoration = InputDecoration(
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
@@ -23,6 +28,8 @@ class Global {
   BorderRadiusGeometry customBorderRadius(double r) {
     return BorderRadius.circular(r);
   }
+
+  SizedBox height10Box = SizedBox(height: 15.0);
 
   List<BoxShadow> boxShadow = [
     BoxShadow(

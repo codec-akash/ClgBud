@@ -34,8 +34,10 @@ class UserDataBase with ChangeNotifier {
 
   void saveUserData() async {
     userId = _firebaseAuth.currentUser.uid;
-    DocumentSnapshot userDataSnap = await userCollection.doc(userId).get();
-    userModel = UserModel.fromJson(userDataSnap.data());
-    print(userModel.isUserComplete);
+    if (userModel == null) {
+      DocumentSnapshot userDataSnap = await userCollection.doc(userId).get();
+      userModel = UserModel.fromJson(userDataSnap.data());
+      print(userModel.isUserComplete);
+    }
   }
 }

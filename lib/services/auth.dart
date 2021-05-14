@@ -78,6 +78,8 @@ class AuthService with ChangeNotifier {
             }
             userId = userCredential.user.uid;
             _isLoading = false;
+            Navigator.of(context).pop();
+            print("VErification Complete");
           } catch (e) {
             status = "Error Occured while sign -in";
             _isLoading = false;
@@ -147,7 +149,9 @@ class AuthService with ChangeNotifier {
             },
           );
         },
-        codeAutoRetrievalTimeout: (String verificationId) {},
+        codeAutoRetrievalTimeout: (String verificationId) {
+          print("Auto Retriveal");
+        },
       );
     } catch (e) {
       print("reached main catch");

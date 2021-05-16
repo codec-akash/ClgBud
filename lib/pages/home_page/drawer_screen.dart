@@ -1,4 +1,5 @@
 import 'package:clgbud/pages/add_product/add_product.dart';
+import 'package:clgbud/pages/your_product/your_products.dart';
 import 'package:clgbud/services/auth.dart';
 import 'package:clgbud/services/user_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -52,11 +53,13 @@ class DrawerScreen extends StatelessWidget {
                   ListTile(
                     title: Text("Your Products"),
                     leading: Icon(Icons.bolt),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.of(context).pushNamed(YourProducts.routeName);
+                    },
                   ),
                   ListTile(
                     title: Text("Your Order"),
-                    leading: Icon(CupertinoIcons.cart),
+                    leading: Icon(Icons.shopping_cart_outlined),
                     onTap: () {},
                   ),
                   ListTile(

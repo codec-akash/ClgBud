@@ -48,4 +48,18 @@ class ProductDataBase with ChangeNotifier {
       print(e);
     }
   }
+
+  Future<List<ProductModel>> userProducts(String userID) async {
+    List<ProductModel> userProduct = [];
+    try {
+      QuerySnapshot querySnapshot =
+          await prodCollection.where("user_id", isEqualTo: userID).get();
+      userProduct = querySnapshot.docs.map((e) {
+        return ProductModel.fromJson(e.data());
+      }).toList();
+    } catch (e) {
+      print(e);
+    }
+    return userProduct;
+  }
 }

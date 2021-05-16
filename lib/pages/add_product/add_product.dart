@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:clgbud/model/product_model.dart';
@@ -72,18 +71,40 @@ class _AddProductState extends State<AddProduct> {
       subject: subject,
       userId: Provider.of<UserDataBase>(context, listen: false).userId,
       isSold: false,
+      addedDate: DateTime.now(),
     );
-    try {
-      FocusScope.of(context).unfocus();
+    if (checkValidation()) {
+      try {
+        FocusScope.of(context).unfocus();
 
-      await Provider.of<ProductDataBase>(context, listen: false).addProduct(
-          productModel: productModel,
-          productImage: _pickedImage,
-          userId: productModel.userId);
-      clearData();
-    } catch (e) {
-      print(e);
+        await Provider.of<ProductDataBase>(context, listen: false).addProduct(
+            productModel: productModel,
+            productImage: _pickedImage,
+            userId: productModel.userId);
+        clearData();
+      } catch (e) {
+        print(e);
+      }
     }
+  }
+
+  bool checkValidation() {
+    if (_formKey.currentState.validate()) {
+      if (courses == null || category == null || subject == null) {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text("Enter complete details"),
+        ));
+        return false;
+      }
+      if (_pickedImage == null) {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text("Pick a image"),
+        ));
+        return false;
+      }
+      return true;
+    }
+    return false;
   }
 
   void clearData() {
@@ -107,48 +128,6 @@ class _AddProductState extends State<AddProduct> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Add Product"),
-      ),
-      floatingActionButton: Container(
-        width: MediaQuery.of(context).size.width - 36,
-        padding: EdgeInsets.only(right: 4),
-        height: 50,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Container(
-              width: AppMediaQuery(context).appWidth(50) - 30,
-              decoration: BoxDecoration(
-                borderRadius: Global().borderRadius,
-              ),
-              child: FlatButton(
-                padding: EdgeInsets.symmetric(vertical: 10.0),
-                shape: RoundedRectangleBorder(
-                    borderRadius: Global().borderRadius,
-                    side: BorderSide(color: Colors.red)),
-                color: Colors.white,
-                textColor: Colors.red,
-                child: Text('Cancel', style: Global().buttonText),
-                onPressed: () {
-                  clearData();
-                },
-              ),
-            ),
-            Container(
-                width: AppMediaQuery(context).appWidth(50) - 30,
-                decoration: BoxDecoration(
-                  borderRadius: Global().borderRadius,
-                ),
-                child: RaisedButton(
-                  padding: EdgeInsets.symmetric(vertical: 10.0),
-                  color: Theme.of(context).accentColor,
-                  textColor: Colors.white,
-                  child: Text("Add", style: Global().buttonText),
-                  onPressed: () {
-                    saveProduct();
-                  },
-                )),
-          ],
-        ),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -347,7 +326,45 @@ class _AddProductState extends State<AddProduct> {
                     ),
                   ),
                 ),
-                SizedBox(height: 77),
+                Global().height10Box,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      width: AppMediaQuery(context).appWidth(50) - 30,
+                      decoration: BoxDecoration(
+                        borderRadius: Global().borderRadius,
+                      ),
+                      child: FlatButton(
+                        padding: EdgeInsets.symmetric(vertical: 10.0),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: Global().borderRadius,
+                            side: BorderSide(color: Colors.red)),
+                        color: Colors.white,
+                        textColor: Colors.red,
+                        child: Text('Cancel', style: Global().buttonText),
+                        onPressed: () {
+                          clearData();
+                        },
+                      ),
+                    ),
+                    Container(
+                        width: AppMediaQuery(context).appWidth(50) - 30,
+                        decoration: BoxDecoration(
+                          borderRadius: Global().borderRadius,
+                        ),
+                        child: RaisedButton(
+                          padding: EdgeInsets.symmetric(vertical: 10.0),
+                          color: Theme.of(context).accentColor,
+                          textColor: Colors.white,
+                          child: Text("Add", style: Global().buttonText),
+                          onPressed: () {
+                            saveProduct();
+                          },
+                        )),
+                  ],
+                ),
+                SizedBox(height: 30),
               ],
             ),
           ),

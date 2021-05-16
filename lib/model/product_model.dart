@@ -7,6 +7,7 @@ class ProductModel {
   String subject;
   String userId;
   String productImage;
+  DateTime addedDate;
   double amount;
   bool isSold;
 
@@ -21,6 +22,7 @@ class ProductModel {
     this.amount,
     this.isSold,
     this.productImage,
+    this.addedDate,
   });
 
   ProductModel.fromJson(Map<String, dynamic> json) {
@@ -33,6 +35,7 @@ class ProductModel {
     isSold = json['isSold'];
     amount = double.parse(json['amount'].toString());
     productImage = json['product_image'];
+    addedDate = json['added_date'];
   }
 
   Map<String, dynamic> toJson() {
@@ -46,6 +49,7 @@ class ProductModel {
     data['isSold'] = this.isSold;
     data['amount'] = this.amount;
     data['product_image'] = this.productImage;
+    data['added_date'] = this.addedDate;
     return data;
   }
 }

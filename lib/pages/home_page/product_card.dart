@@ -7,55 +7,47 @@ class ProductCard extends StatelessWidget {
   ProductCard({this.product});
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 5.0),
-      decoration: BoxDecoration(
-        // color: Colors.white,
-        borderRadius: Global().borderRadius,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 140,
-            width: double.infinity,
-            child: ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10),
-                topRight: Radius.circular(10),
-              ),
-              child: Image.network(
-                product.productImage,
-                fit: BoxFit.cover,
-              ),
+    return GestureDetector(
+      onTap: () {},
+      child: GridTile(
+        child: Container(
+          width: double.infinity,
+          child: ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10),
+              topRight: Radius.circular(10),
+            ),
+            child: FadeInImage(
+              placeholder: AssetImage('images/product-placeholder.png'),
+              image: NetworkImage(product.productImage),
+              fit: BoxFit.cover,
+              fadeOutCurve: Curves.easeOut,
             ),
           ),
-          Container(
-            // height: 130,
-            padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: Global().borderRadius,
-            ),
-            width: double.infinity,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Name :: ${product.productName}",
-                  softWrap: false,
-                  style: Global().textStyle,
-                ),
-                Text(
-                  "Price :: ${product.amount}",
-                  style: Global().textStyle,
-                ),
-              ],
-            ),
+        ),
+        footer: GridTileBar(
+          backgroundColor: Colors.black87,
+          title: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Name :: ${product.productName}",
+                softWrap: false,
+                style: Global().textStyle,
+              ),
+              Text(
+                "Price :: ${product.amount}",
+                style: Global().textStyle,
+              ),
+            ],
           ),
-        ],
+          trailing: IconButton(
+            icon: Icon(Icons.favorite),
+            onPressed: () {},
+          ),
+        ),
       ),
     );
   }

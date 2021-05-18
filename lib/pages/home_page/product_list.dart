@@ -2,7 +2,6 @@ import 'package:clgbud/model/product_model.dart';
 import 'package:clgbud/pages/home_page/product_card.dart';
 import 'package:clgbud/utils/app_media_query.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class ProductList extends StatelessWidget {
   final List<ProductModel> productList;

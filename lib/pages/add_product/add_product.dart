@@ -5,6 +5,7 @@ import 'package:clgbud/services/product_database.dart';
 import 'package:clgbud/services/user_database.dart';
 import 'package:clgbud/utils/app_media_query.dart';
 import 'package:clgbud/utils/global.dart';
+import 'package:clgbud/utils/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -34,6 +35,8 @@ class _AddProductState extends State<AddProduct> {
 
   double price;
 
+  bool isLoading = false;
+
   List<String> courseList = ["Btech", "MTech", "BBA"];
   List<String> categoryList;
   List<String> subjectList;
@@ -62,6 +65,9 @@ class _AddProductState extends State<AddProduct> {
   }
 
   Future<void> saveProduct() async {
+    setState(() {
+      isLoading = true;
+    });
     ProductModel productModel = ProductModel(
       productName: productName,
       amount: price,
@@ -82,8 +88,20 @@ class _AddProductState extends State<AddProduct> {
             productImage: _pickedImage,
             userId: productModel.userId);
         clearData();
+        setState(() {
+          isLoading = false;
+        });
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text("Item Added"),
+        ));
       } catch (e) {
         print(e);
+        setState(() {
+          isLoading = false;
+        });
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text("Error Occurred Try again"),
+        ));
       }
     }
   }
@@ -129,247 +147,250 @@ class _AddProductState extends State<AddProduct> {
       appBar: AppBar(
         title: Text("Add Product"),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    pickImage();
-                  },
-                  child: Container(
-                    child: Center(
-                      child: _pickedImage == null
-                          ? Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey[400],
-                                border: Border.all(color: Colors.black),
-                                borderRadius: Global().borderRadius,
-                              ),
-                              height: 150,
-                              width: double.infinity,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.add_a_photo_outlined),
-                                  SizedBox(width: 5.0),
-                                  Text("Add Image"),
-                                ],
-                              ),
-                            )
-                          : Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black),
-                                borderRadius: Global().borderRadius,
-                              ),
-                              child: Image.file(
-                                _pickedImage,
-                                fit: BoxFit.cover,
-                                height: 250,
-                              ),
+      body: isLoading
+          ? Loading()
+          : SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          pickImage();
+                        },
+                        child: Container(
+                          child: Center(
+                            child: _pickedImage == null
+                                ? Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[400],
+                                      border: Border.all(color: Colors.black),
+                                      borderRadius: Global().borderRadius,
+                                    ),
+                                    height: 150,
+                                    width: double.infinity,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.add_a_photo_outlined),
+                                        SizedBox(width: 5.0),
+                                        Text("Add Image"),
+                                      ],
+                                    ),
+                                  )
+                                : Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.black),
+                                      borderRadius: Global().borderRadius,
+                                    ),
+                                    child: Image.file(
+                                      _pickedImage,
+                                      fit: BoxFit.cover,
+                                      height: 250,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ),
+                      Global().height10Box,
+                      TextFormField(
+                        controller: productNameController,
+                        decoration: Global().textFieldDecoration.copyWith(
+                              labelText: 'Item Name',
                             ),
-                    ),
-                  ),
-                ),
-                Global().height10Box,
-                TextFormField(
-                  controller: productNameController,
-                  decoration: Global().textFieldDecoration.copyWith(
-                        labelText: 'Item Name',
-                      ),
-                  validator: (value) {
-                    if (value.length < 3) {
-                      return "Enter a valid name";
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    productName = value;
-                  },
-                ),
-                Global().height10Box,
-                TextFormField(
-                  controller: productDescController,
-                  decoration: Global().textFieldDecoration.copyWith(
-                        labelText: 'Item Description',
-                      ),
-                  validator: (value) {
-                    return null;
-                  },
-                  onChanged: (value) {
-                    productDesc = value;
-                  },
-                ),
-                Global().height10Box,
-                TextFormField(
-                  controller: productAmoutController,
-                  decoration: Global().textFieldDecoration.copyWith(
-                        labelText: 'Item Price',
-                      ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Please enter a price.';
-                    }
-                    if (double.tryParse(value) == null) {
-                      return 'Please enter a valid number.';
-                    }
-                    if (double.parse(value) <= 0) {
-                      return 'Please enter a number greater than zero.';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    setState(() {
-                      price = double.tryParse(value);
-                    });
-                  },
-                ),
-                Global().height10Box,
-                Text("Select a Course"),
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 10.0),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    border: Border.all(color: Colors.grey[400]),
-                    borderRadius: Global().borderRadius,
-                  ),
-                  child: DropdownButton(
-                    items: courseList
-                        .map((course) => DropdownMenuItem(
-                              value: course,
-                              child: Text(course),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        courses = value;
-                      });
-                      print("$value");
-                    },
-                    hint: Text(courses ?? courseHint),
-                    underline: Container(),
-                    isExpanded: true,
-                    icon: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(Icons.arrow_drop_down),
-                    ),
-                  ),
-                ),
-                Global().height10Box,
-                Text("Select a Category"),
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 10.0),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    border: Border.all(color: Colors.grey[400]),
-                    borderRadius: Global().borderRadius,
-                  ),
-                  child: DropdownButton(
-                    items: courseList
-                        .map((course) => DropdownMenuItem(
-                              value: course,
-                              child: Text(course),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        category = value;
-                      });
-                      print("$value");
-                    },
-                    hint: Text(category ?? categoryHint),
-                    underline: Container(),
-                    isExpanded: true,
-                    icon: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(Icons.arrow_drop_down),
-                    ),
-                  ),
-                ),
-                Global().height10Box,
-                Text("Select a Subject"),
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 10.0),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    border: Border.all(color: Colors.grey[400]),
-                    borderRadius: Global().borderRadius,
-                  ),
-                  child: DropdownButton(
-                    items: courseList
-                        .map((course) => DropdownMenuItem(
-                              value: course,
-                              child: Text(course),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        subject = value;
-                      });
-                      print("$value");
-                    },
-                    hint: Text(subject ?? subjectHint),
-                    underline: Container(),
-                    isExpanded: true,
-                    icon: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(Icons.arrow_drop_down),
-                    ),
-                  ),
-                ),
-                Global().height10Box,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Container(
-                      width: AppMediaQuery(context).appWidth(50) - 30,
-                      decoration: BoxDecoration(
-                        borderRadius: Global().borderRadius,
-                      ),
-                      child: FlatButton(
-                        padding: EdgeInsets.symmetric(vertical: 10.0),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: Global().borderRadius,
-                            side: BorderSide(color: Colors.red)),
-                        color: Colors.white,
-                        textColor: Colors.red,
-                        child: Text('Cancel', style: Global().buttonText),
-                        onPressed: () {
-                          clearData();
+                        validator: (value) {
+                          if (value.length < 3) {
+                            return "Enter a valid name";
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          productName = value;
                         },
                       ),
-                    ),
-                    Container(
-                        width: AppMediaQuery(context).appWidth(50) - 30,
+                      Global().height10Box,
+                      TextFormField(
+                        controller: productDescController,
+                        decoration: Global().textFieldDecoration.copyWith(
+                              labelText: 'Item Description',
+                            ),
+                        validator: (value) {
+                          return null;
+                        },
+                        onChanged: (value) {
+                          productDesc = value;
+                        },
+                      ),
+                      Global().height10Box,
+                      TextFormField(
+                        controller: productAmoutController,
+                        decoration: Global().textFieldDecoration.copyWith(
+                              labelText: 'Item Price',
+                            ),
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please enter a price.';
+                          }
+                          if (double.tryParse(value) == null) {
+                            return 'Please enter a valid number.';
+                          }
+                          if (double.parse(value) <= 0) {
+                            return 'Please enter a number greater than zero.';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            price = double.tryParse(value);
+                          });
+                        },
+                      ),
+                      Global().height10Box,
+                      Text("Select a Course"),
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),
                         decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          border: Border.all(color: Colors.grey[400]),
                           borderRadius: Global().borderRadius,
                         ),
-                        child: RaisedButton(
-                          padding: EdgeInsets.symmetric(vertical: 10.0),
-                          color: Theme.of(context).accentColor,
-                          textColor: Colors.white,
-                          child: Text("Add", style: Global().buttonText),
-                          onPressed: () {
-                            saveProduct();
+                        child: DropdownButton(
+                          items: courseList
+                              .map((course) => DropdownMenuItem(
+                                    value: course,
+                                    child: Text(course),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              courses = value;
+                            });
+                            print("$value");
                           },
-                        )),
-                  ],
+                          hint: Text(courses ?? courseHint),
+                          underline: Container(),
+                          isExpanded: true,
+                          icon: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(Icons.arrow_drop_down),
+                          ),
+                        ),
+                      ),
+                      Global().height10Box,
+                      Text("Select a Category"),
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          border: Border.all(color: Colors.grey[400]),
+                          borderRadius: Global().borderRadius,
+                        ),
+                        child: DropdownButton(
+                          items: courseList
+                              .map((course) => DropdownMenuItem(
+                                    value: course,
+                                    child: Text(course),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              category = value;
+                            });
+                            print("$value");
+                          },
+                          hint: Text(category ?? categoryHint),
+                          underline: Container(),
+                          isExpanded: true,
+                          icon: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(Icons.arrow_drop_down),
+                          ),
+                        ),
+                      ),
+                      Global().height10Box,
+                      Text("Select a Subject"),
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          border: Border.all(color: Colors.grey[400]),
+                          borderRadius: Global().borderRadius,
+                        ),
+                        child: DropdownButton(
+                          items: courseList
+                              .map((course) => DropdownMenuItem(
+                                    value: course,
+                                    child: Text(course),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              subject = value;
+                            });
+                            print("$value");
+                          },
+                          hint: Text(subject ?? subjectHint),
+                          underline: Container(),
+                          isExpanded: true,
+                          icon: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(Icons.arrow_drop_down),
+                          ),
+                        ),
+                      ),
+                      Global().height10Box,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Container(
+                            width: AppMediaQuery(context).appWidth(50) - 30,
+                            decoration: BoxDecoration(
+                              borderRadius: Global().borderRadius,
+                            ),
+                            child: FlatButton(
+                              padding: EdgeInsets.symmetric(vertical: 10.0),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: Global().borderRadius,
+                                  side: BorderSide(color: Colors.red)),
+                              color: Colors.white,
+                              textColor: Colors.red,
+                              child: Text('Cancel', style: Global().buttonText),
+                              onPressed: () {
+                                clearData();
+                              },
+                            ),
+                          ),
+                          Container(
+                              width: AppMediaQuery(context).appWidth(50) - 30,
+                              decoration: BoxDecoration(
+                                borderRadius: Global().borderRadius,
+                              ),
+                              child: RaisedButton(
+                                padding: EdgeInsets.symmetric(vertical: 10.0),
+                                color: Theme.of(context).accentColor,
+                                textColor: Colors.white,
+                                child: Text("Add", style: Global().buttonText),
+                                onPressed: () {
+                                  saveProduct();
+                                },
+                              )),
+                        ],
+                      ),
+                      SizedBox(height: 30),
+                    ],
+                  ),
                 ),
-                SizedBox(height: 30),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }

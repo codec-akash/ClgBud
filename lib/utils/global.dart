@@ -75,4 +75,13 @@ class Global {
         spreadRadius: 2.0,
         offset: Offset(0, 25))
   ];
+
+  List<BoxShadow> elevatedShadow = [
+    BoxShadow(
+      color: Colors.black54,
+      blurRadius: 2.0,
+      spreadRadius: 0.0,
+      offset: Offset(4.0, 2.0), // shadow direction: bottom right
+    )
+  ];
 }

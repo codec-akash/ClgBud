@@ -1,5 +1,6 @@
 import 'package:clgbud/model/product_model.dart';
 import 'package:clgbud/utils/app_media_query.dart';
+import 'package:clgbud/utils/date_time_util.dart';
 import 'package:clgbud/utils/global.dart';
 import 'package:flutter/material.dart';
 
@@ -14,10 +15,10 @@ class YourProdCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: Global().borderRadius,
         color: Colors.white,
-        boxShadow: Global().boxShadow,
+        // border: Border.all(color: Colors.black38),
+        boxShadow: Global().elevatedShadow,
       ),
       child: Row(
-        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           ClipRRect(
             borderRadius: Global().borderRadius,
@@ -34,18 +35,17 @@ class YourProdCard extends StatelessWidget {
           ),
           SizedBox(width: 15.0),
           Container(
-            width: AppMediaQuery(context).appWidth(55),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(userProduct.productName),
-                Text(
-                  "Date :: ${userProduct.addedDate?.toIso8601String() ?? DateTime.now().toIso8601String()}",
-                  softWrap: false,
-                  overflow: TextOverflow.fade,
-                ),
+                if (userProduct.addedDate != null)
+                  Text(
+                    "Date :: ${DateUtil().dateformatDefault(userProduct.addedDate)}",
+                    softWrap: false,
+                    overflow: TextOverflow.fade,
+                  ),
                 Text("Price :: ${userProduct.amount}"),
-                // Text(userProduct.isSold ? "Solded" : "Pending"),
                 RichText(
                   text: TextSpan(
                       text: "Status  ::  ",

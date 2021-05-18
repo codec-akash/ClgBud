@@ -15,6 +15,7 @@ class YourProducts extends StatelessWidget {
       appBar: AppBar(
         title: Text("Your Products"),
       ),
+      // backgroundColor: Colors.grey[300],
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15.0),
         child: FutureBuilder<List<ProductModel>>(

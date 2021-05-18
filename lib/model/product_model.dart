@@ -35,7 +35,7 @@ class ProductModel {
     isSold = json['isSold'];
     amount = double.parse(json['amount'].toString());
     productImage = json['product_image'];
-    addedDate = json['added_date'];
+    addedDate = json['added_date']?.toDate();
   }
 
   Map<String, dynamic> toJson() {

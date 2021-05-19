@@ -1,7 +1,6 @@
 import 'package:clgbud/model/user_model.dart';
 import 'package:clgbud/services/user_database.dart';
 import 'package:clgbud/utils/global.dart';
-import 'package:clgbud/utils/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';

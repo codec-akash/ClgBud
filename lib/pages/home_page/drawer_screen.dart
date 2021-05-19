@@ -10,23 +10,19 @@ import 'package:provider/provider.dart';
 class DrawerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final userData = Provider.of<UserDataBase>(context, listen: true);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        title: Consumer<UserDataBase>(
-          builder: (context, value, _) {
-            return GestureDetector(
-              child: value.userData?.isUserComplete ?? false
-                  ? Text("${value.userData.username}")
-                  : Text("Add Information"),
-              onTap: () {
-                Navigator.of(context).pushNamed(UserDetails.routeName);
-              },
-            );
-          },
-        ),
-      ),
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          title: GestureDetector(
+            child: userData.userData?.isUserComplete ?? false
+                ? Text("${userData.userData.username}")
+                : Text("Add Information"),
+            onTap: () {
+              Navigator.of(context).pushNamed(UserDetails.routeName);
+            },
+          )),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
         child: Column(
@@ -77,6 +73,7 @@ class DrawerScreen extends StatelessWidget {
                 title: Text("LogOut"),
                 leading: Icon(Icons.logout),
                 onTap: () {
+                  Provider.of<UserDataBase>(context, listen: false).logout();
                   AuthService().signout();
                 },
               ),

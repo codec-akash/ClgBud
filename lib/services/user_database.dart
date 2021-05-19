@@ -33,6 +33,7 @@ class UserDataBase with ChangeNotifier {
     } catch (e) {
       print(e);
     }
+    notifyListeners();
   }
 
   void saveUserData() async {
@@ -42,5 +43,11 @@ class UserDataBase with ChangeNotifier {
       userModel = UserModel.fromJson(userDataSnap.data());
       print(userModel.isUserComplete);
     }
+    notifyListeners();
+  }
+
+  void logout() {
+    userModel = null;
+    notifyListeners();
   }
 }

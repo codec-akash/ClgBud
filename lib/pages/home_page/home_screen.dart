@@ -2,6 +2,7 @@ import 'package:clgbud/model/product_model.dart';
 import 'package:clgbud/pages/home_page/product_list.dart';
 import 'package:clgbud/services/product_database.dart';
 import 'package:clgbud/utils/global.dart';
+import 'package:clgbud/utils/loading.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -39,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return AnimatedContainer(
       transform: Matrix4.translationValues(xoffset, yoffset, 0)
         ..scale(scalefactor),
-      duration: Duration(milliseconds: 350),
+      duration: Duration(milliseconds: 250),
       decoration: BoxDecoration(
         color: Theme.of(context).backgroundColor,
         borderRadius: BorderRadius.circular(_isDrawerOpen ? 20.0 : 0.0),
@@ -76,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 stream: ProductDataBase().allProducts,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Text("Loading");
+                    return Center(child: Loading());
                   }
                   if (snapshot.hasError) {
                     return Text("${snapshot.error}");
@@ -86,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: ProductList(productList: snapshot.data),
                     );
                   }
-                  return Text("Loading");
+                  return Loading();
                 },
               )
             ],

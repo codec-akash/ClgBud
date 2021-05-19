@@ -2,6 +2,7 @@ import 'package:clgbud/model/product_model.dart';
 import 'package:clgbud/pages/your_product/your_product_card.dart';
 import 'package:clgbud/services/product_database.dart';
 import 'package:clgbud/services/user_database.dart';
+import 'package:clgbud/utils/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +23,7 @@ class YourProducts extends StatelessWidget {
             future: products.userProducts(user.userId),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Text("Loading");
+                return Loading();
               }
               if (snapshot.hasError) {
                 return Text(snapshot.error);

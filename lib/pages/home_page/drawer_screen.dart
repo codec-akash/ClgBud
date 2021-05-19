@@ -1,4 +1,5 @@
 import 'package:clgbud/pages/add_product/add_product.dart';
+import 'package:clgbud/pages/user_details/user_details.dart';
 import 'package:clgbud/pages/your_product/your_products.dart';
 import 'package:clgbud/services/auth.dart';
 import 'package:clgbud/services/user_database.dart';
@@ -16,15 +17,16 @@ class DrawerScreen extends StatelessWidget {
         title: Consumer<UserDataBase>(
           builder: (context, value, _) {
             return GestureDetector(
-              child: Text(value?.userData?.username ?? "Click to add Info"),
+              child: value.userData?.isUserComplete ?? false
+                  ? Text("${value.userData.username}")
+                  : Text("Add Information"),
               onTap: () {
-                print("TODO");
+                Navigator.of(context).pushNamed(UserDetails.routeName);
               },
             );
           },
         ),
       ),
-      // backgroundColor: Theme.of(context).accentColor,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
         child: Column(

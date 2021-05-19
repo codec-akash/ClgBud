@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:clgbud/model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,8 +26,13 @@ class UserDataBase with ChangeNotifier {
       rollno: rollNo,
       isUserComplete: isUserComplete,
     );
+    print("usermodel: ${userData.rollno}");
     this.userId = userId;
-    await userCollection.doc(userId).set(userModel.toJson());
+    try {
+      await userCollection.doc(userId).set(userModel.toJson());
+    } catch (e) {
+      print(e);
+    }
   }
 
   void saveUserData() async {

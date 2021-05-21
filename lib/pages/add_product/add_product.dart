@@ -23,24 +23,15 @@ class _AddProductState extends State<AddProduct> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  ProductModel productModel;
+  ProductModel productModel = ProductModel();
 
-  String productName;
-  String productDesc;
-  String category;
-  String courses;
-  String courseHint = "Select a relevant course";
-  String categoryHint = "Select a relevant category";
-  // String subject;
-  // String subjectHint = "Select a relevant Subject";
-
-  double price;
+  String courseHint;
+  String categoryHint;
 
   bool isLoading = false;
 
   List<String> courseList = [];
   List<String> categoryList;
-  // List<String> subjectList;
 
   File _pickedImage;
 
@@ -49,6 +40,9 @@ class _AddProductState extends State<AddProduct> {
     courseList = Provider.of<ProductDataBase>(context, listen: false).course;
     categoryList =
         Provider.of<ProductDataBase>(context, listen: false).category;
+    productModel = widget.editedProduct ?? ProductModel();
+    courseHint = productModel?.course ?? "Select a relevant course";
+    categoryHint = productModel?.category ?? "Select a relevant category";
     super.didChangeDependencies();
   }
 
@@ -74,18 +68,11 @@ class _AddProductState extends State<AddProduct> {
   }
 
   Future<void> saveProduct() async {
-    productModel = ProductModel(
-      productName: productName,
-      amount: price,
-      productDescription: productDesc,
-      category: category,
-      course: courses,
-      // subject: subject,
-      userId: Provider.of<UserDataBase>(context, listen: false).userId,
-      isSold: false,
-      addedDate: DateTime.now(),
-    );
     if (checkValidation()) {
+      productModel.userId =
+          Provider.of<UserDataBase>(context, listen: false).userId;
+      productModel.addedDate = DateTime.now();
+      productModel.isSold = false;
       try {
         setState(() {
           isLoading = true;
@@ -94,7 +81,6 @@ class _AddProductState extends State<AddProduct> {
             productModel: productModel,
             productImage: _pickedImage,
             userId: productModel.userId);
-        // clearData();
         setState(() {
           isLoading = false;
         });
@@ -102,8 +88,7 @@ class _AddProductState extends State<AddProduct> {
           content: Text("Item Added"),
         ));
         FocusScope.of(context).unfocus();
-        courses = null;
-        category = null;
+        productModel = ProductModel();
         _pickedImage = null;
       } catch (e) {
         print(e);
@@ -119,7 +104,7 @@ class _AddProductState extends State<AddProduct> {
 
   bool checkValidation() {
     if (_formKey.currentState.validate()) {
-      if (courses == null || category == null) {
+      if (productModel.course == null || productModel.category == null) {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text("Enter complete details"),
         ));
@@ -138,14 +123,6 @@ class _AddProductState extends State<AddProduct> {
 
   void clearData() {
     _formKey.currentState.reset();
-    setState(() {
-      productName = null;
-      productDesc = null;
-      price = null;
-      courses = null;
-      category = null;
-      _pickedImage = null;
-    });
   }
 
   @override
@@ -180,16 +157,25 @@ class _AddProductState extends State<AddProduct> {
                                     ),
                                     height: 150,
                                     width: double.infinity,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(Icons.add_a_photo_outlined),
-                                        SizedBox(width: 5.0),
-                                        Text("Add Image"),
-                                      ],
-                                    ),
+                                    child: productModel?.productImage != null
+                                        ? FadeInImage(
+                                            placeholder: AssetImage(
+                                                "images/product-placeholder.png"),
+                                            image: NetworkImage(
+                                                productModel.productImage),
+                                            fadeOutCurve: Curves.bounceOut,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(Icons.add_a_photo_outlined),
+                                              SizedBox(width: 5.0),
+                                              Text("Add Image"),
+                                            ],
+                                          ),
                                   )
                                 : Container(
                                     decoration: BoxDecoration(
@@ -218,7 +204,7 @@ class _AddProductState extends State<AddProduct> {
                           return null;
                         },
                         onChanged: (value) {
-                          productName = value;
+                          productModel.productName = value;
                         },
                       ),
                       Global().height15Box,
@@ -231,7 +217,7 @@ class _AddProductState extends State<AddProduct> {
                           return null;
                         },
                         onChanged: (value) {
-                          productDesc = value;
+                          productModel.productDescription = value;
                         },
                       ),
                       Global().height15Box,
@@ -255,7 +241,7 @@ class _AddProductState extends State<AddProduct> {
                         },
                         onChanged: (value) {
                           setState(() {
-                            price = double.tryParse(value);
+                            productModel.amount = double.tryParse(value);
                           });
                         },
                       ),
@@ -278,11 +264,11 @@ class _AddProductState extends State<AddProduct> {
                               .toList(),
                           onChanged: (value) {
                             setState(() {
-                              courses = value;
+                              productModel.course = value;
                             });
                             print("$value");
                           },
-                          hint: Text(courses ?? courseHint),
+                          hint: Text(productModel?.course ?? courseHint),
                           underline: Container(),
                           isExpanded: true,
                           icon: Padding(
@@ -310,11 +296,11 @@ class _AddProductState extends State<AddProduct> {
                               .toList(),
                           onChanged: (value) {
                             setState(() {
-                              category = value;
+                              productModel.category = value;
                             });
                             print("$value");
                           },
-                          hint: Text(category ?? categoryHint),
+                          hint: Text(productModel?.category ?? categoryHint),
                           underline: Container(),
                           isExpanded: true,
                           icon: Padding(
@@ -324,37 +310,6 @@ class _AddProductState extends State<AddProduct> {
                         ),
                       ),
                       Global().height15Box,
-                      // Text("Select a Subject"),
-                      // Container(
-                      //   width: double.infinity,
-                      //   padding: EdgeInsets.symmetric(horizontal: 10.0),
-                      //   decoration: BoxDecoration(
-                      //     color: Colors.grey[200],
-                      //     border: Border.all(color: Colors.grey[400]),
-                      //     borderRadius: Global().borderRadius,
-                      //   ),
-                      //   child: DropdownButton(
-                      //     items: courseList
-                      //         .map((course) => DropdownMenuItem(
-                      //               value: course,
-                      //               child: Text(course),
-                      //             ))
-                      //         .toList(),
-                      //     onChanged: (value) {
-                      //       setState(() {
-                      //         subject = value;
-                      //       });
-                      //       print("$value");
-                      //     },
-                      //     hint: Text(subject ?? subjectHint),
-                      //     underline: Container(),
-                      //     isExpanded: true,
-                      //     icon: Padding(
-                      //       padding: const EdgeInsets.all(8.0),
-                      //       child: Icon(Icons.arrow_drop_down),
-                      //     ),
-                      //   ),
-                      // ),
                       Global().height15Box,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

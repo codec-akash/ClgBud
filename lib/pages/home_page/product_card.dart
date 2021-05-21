@@ -33,13 +33,13 @@ class ProductCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Name :: ${product.productName}",
+                "${product.productName}",
                 softWrap: false,
-                style: Global().textStyle,
+                style: Global().textStyle.copyWith(color: Colors.white),
               ),
               Text(
                 "Price :: ${product.amount}",
-                style: Global().textStyle,
+                style: Global().textStyle.copyWith(color: Colors.white),
               ),
             ],
           ),

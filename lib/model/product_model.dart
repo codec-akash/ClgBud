@@ -4,7 +4,7 @@ class ProductModel {
   String productDescription;
   String category;
   String course;
-  String subject;
+  // String subject;
   String userId;
   String productImage;
   DateTime addedDate;
@@ -17,7 +17,7 @@ class ProductModel {
     this.productDescription,
     this.category,
     this.course,
-    this.subject,
+    // this.subject,
     this.userId,
     this.amount,
     this.isSold,
@@ -31,7 +31,7 @@ class ProductModel {
     userId = json['user_id'];
     course = json['course'];
     category = json['category'];
-    subject = json['subject'];
+    // subject = json['subject'];
     isSold = json['isSold'];
     amount = double.parse(json['amount'].toString());
     productImage = json['product_image'];
@@ -45,7 +45,7 @@ class ProductModel {
     data['user_id'] = this.userId;
     data['course'] = this.course;
     data['category'] = this.category;
-    data['subject'] = this.subject;
+    // data['subject'] = this.subject;
     data['isSold'] = this.isSold;
     data['amount'] = this.amount;
     data['product_image'] = this.productImage;

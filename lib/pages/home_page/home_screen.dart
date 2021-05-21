@@ -16,6 +16,16 @@ class _HomeScreenState extends State<HomeScreen> {
   double scalefactor = 1;
 
   bool _isDrawerOpen = false;
+  bool _isInit = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setState(() {
+      _isInit = false;
+    });
+  }
 
   void animateHomeScreen() {
     if (_isDrawerOpen) {
@@ -47,52 +57,56 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  IconButton(
-                    padding: const EdgeInsets.all(0.0),
-                    icon: _isDrawerOpen
-                        ? Icon(
-                            Icons.chevron_left,
-                            size: 34,
-                          )
-                        : Icon(Icons.menu),
-                    onPressed: () => animateHomeScreen(),
-                  ),
-                  SizedBox(width: 10.0),
-                  Text("ClgBud", style: Global().headingText),
-                ],
+        child: _isInit
+            ? Loading()
+            : SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        IconButton(
+                          padding: const EdgeInsets.all(0.0),
+                          icon: _isDrawerOpen
+                              ? Icon(
+                                  Icons.chevron_left,
+                                  size: 34,
+                                )
+                              : Icon(Icons.menu),
+                          onPressed: () => animateHomeScreen(),
+                        ),
+                        SizedBox(width: 10.0),
+                        Text("ClgBud", style: Global().headingText),
+                      ],
+                    ),
+                    Global().height15Box,
+                    Text(
+                      "Items Available For Sale",
+                      style: Global().headingText,
+                    ),
+                    StreamBuilder<List<ProductModel>>(
+                      stream: ProductDataBase().allProducts,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: Loading());
+                        }
+                        if (snapshot.hasError) {
+                          return Text("${snapshot.error}");
+                        }
+                        if (snapshot.connectionState ==
+                            ConnectionState.active) {
+                          return Expanded(
+                            child: ProductList(productList: snapshot.data),
+                          );
+                        }
+                        return Loading();
+                      },
+                    )
+                  ],
+                ),
               ),
-              Global().height10Box,
-              Text(
-                "Items Available For Sale",
-                style: Global().headingText,
-              ),
-              StreamBuilder<List<ProductModel>>(
-                stream: ProductDataBase().allProducts,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: Loading());
-                  }
-                  if (snapshot.hasError) {
-                    return Text("${snapshot.error}");
-                  }
-                  if (snapshot.connectionState == ConnectionState.active) {
-                    return Expanded(
-                      child: ProductList(productList: snapshot.data),
-                    );
-                  }
-                  return Loading();
-                },
-              )
-            ],
-          ),
-        ),
       ),
     );
   }

@@ -42,8 +42,8 @@ class UserDataBase with ChangeNotifier {
       DocumentSnapshot userDataSnap = await userCollection.doc(userId).get();
       userModel = UserModel.fromJson(userDataSnap.data());
       print(userModel.isUserComplete);
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   void logout() {

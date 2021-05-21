@@ -12,6 +12,9 @@ import 'package:provider/provider.dart';
 
 class AddProduct extends StatefulWidget {
   static const routeName = "/add-page";
+  final ProductModel editedProduct;
+  AddProduct({this.editedProduct});
+
   @override
   _AddProductState createState() => _AddProductState();
 }
@@ -20,28 +23,34 @@ class _AddProductState extends State<AddProduct> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final productNameController = TextEditingController();
-  final productAmoutController = TextEditingController();
-  final productDescController = TextEditingController();
+  ProductModel productModel;
 
   String productName;
   String productDesc;
   String category;
   String courses;
-  String subject;
   String courseHint = "Select a relevant course";
   String categoryHint = "Select a relevant category";
-  String subjectHint = "Select a relevant Subject";
+  // String subject;
+  // String subjectHint = "Select a relevant Subject";
 
   double price;
 
   bool isLoading = false;
 
-  List<String> courseList = ["Btech", "MTech", "BBA"];
+  List<String> courseList = [];
   List<String> categoryList;
-  List<String> subjectList;
+  // List<String> subjectList;
 
   File _pickedImage;
+
+  @override
+  void didChangeDependencies() {
+    courseList = Provider.of<ProductDataBase>(context, listen: false).course;
+    categoryList =
+        Provider.of<ProductDataBase>(context, listen: false).category;
+    super.didChangeDependencies();
+  }
 
   Future<void> pickImage() async {
     try {
@@ -65,35 +74,37 @@ class _AddProductState extends State<AddProduct> {
   }
 
   Future<void> saveProduct() async {
-    setState(() {
-      isLoading = true;
-    });
-    ProductModel productModel = ProductModel(
+    productModel = ProductModel(
       productName: productName,
       amount: price,
       productDescription: productDesc,
       category: category,
       course: courses,
-      subject: subject,
+      // subject: subject,
       userId: Provider.of<UserDataBase>(context, listen: false).userId,
       isSold: false,
       addedDate: DateTime.now(),
     );
     if (checkValidation()) {
       try {
-        FocusScope.of(context).unfocus();
-
+        setState(() {
+          isLoading = true;
+        });
         await Provider.of<ProductDataBase>(context, listen: false).addProduct(
             productModel: productModel,
             productImage: _pickedImage,
             userId: productModel.userId);
-        clearData();
+        // clearData();
         setState(() {
           isLoading = false;
         });
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text("Item Added"),
         ));
+        FocusScope.of(context).unfocus();
+        courses = null;
+        category = null;
+        _pickedImage = null;
       } catch (e) {
         print(e);
         setState(() {
@@ -108,7 +119,7 @@ class _AddProductState extends State<AddProduct> {
 
   bool checkValidation() {
     if (_formKey.currentState.validate()) {
-      if (courses == null || category == null || subject == null) {
+      if (courses == null || category == null) {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text("Enter complete details"),
         ));
@@ -126,15 +137,12 @@ class _AddProductState extends State<AddProduct> {
   }
 
   void clearData() {
+    _formKey.currentState.reset();
     setState(() {
-      productNameController.clear();
-      productAmoutController.clear();
-      productDescController.clear();
       productName = null;
       productDesc = null;
       price = null;
       courses = null;
-      subject = null;
       category = null;
       _pickedImage = null;
     });
@@ -197,9 +205,9 @@ class _AddProductState extends State<AddProduct> {
                           ),
                         ),
                       ),
-                      Global().height10Box,
+                      Global().height15Box,
                       TextFormField(
-                        controller: productNameController,
+                        initialValue: widget.editedProduct?.productName,
                         decoration: Global().textFieldDecoration.copyWith(
                               labelText: 'Item Name',
                             ),
@@ -213,9 +221,9 @@ class _AddProductState extends State<AddProduct> {
                           productName = value;
                         },
                       ),
-                      Global().height10Box,
+                      Global().height15Box,
                       TextFormField(
-                        controller: productDescController,
+                        initialValue: widget.editedProduct?.productDescription,
                         decoration: Global().textFieldDecoration.copyWith(
                               labelText: 'Item Description',
                             ),
@@ -226,9 +234,9 @@ class _AddProductState extends State<AddProduct> {
                           productDesc = value;
                         },
                       ),
-                      Global().height10Box,
+                      Global().height15Box,
                       TextFormField(
-                        controller: productAmoutController,
+                        initialValue: widget.editedProduct?.amount?.toString(),
                         decoration: Global().textFieldDecoration.copyWith(
                               labelText: 'Item Price',
                             ),
@@ -251,7 +259,7 @@ class _AddProductState extends State<AddProduct> {
                           });
                         },
                       ),
-                      Global().height10Box,
+                      Global().height15Box,
                       Text("Select a Course"),
                       Container(
                         width: double.infinity,
@@ -283,7 +291,7 @@ class _AddProductState extends State<AddProduct> {
                           ),
                         ),
                       ),
-                      Global().height10Box,
+                      Global().height15Box,
                       Text("Select a Category"),
                       Container(
                         width: double.infinity,
@@ -294,7 +302,7 @@ class _AddProductState extends State<AddProduct> {
                           borderRadius: Global().borderRadius,
                         ),
                         child: DropdownButton(
-                          items: courseList
+                          items: categoryList
                               .map((course) => DropdownMenuItem(
                                     value: course,
                                     child: Text(course),
@@ -315,39 +323,39 @@ class _AddProductState extends State<AddProduct> {
                           ),
                         ),
                       ),
-                      Global().height10Box,
-                      Text("Select a Subject"),
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          border: Border.all(color: Colors.grey[400]),
-                          borderRadius: Global().borderRadius,
-                        ),
-                        child: DropdownButton(
-                          items: courseList
-                              .map((course) => DropdownMenuItem(
-                                    value: course,
-                                    child: Text(course),
-                                  ))
-                              .toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              subject = value;
-                            });
-                            print("$value");
-                          },
-                          hint: Text(subject ?? subjectHint),
-                          underline: Container(),
-                          isExpanded: true,
-                          icon: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(Icons.arrow_drop_down),
-                          ),
-                        ),
-                      ),
-                      Global().height10Box,
+                      Global().height15Box,
+                      // Text("Select a Subject"),
+                      // Container(
+                      //   width: double.infinity,
+                      //   padding: EdgeInsets.symmetric(horizontal: 10.0),
+                      //   decoration: BoxDecoration(
+                      //     color: Colors.grey[200],
+                      //     border: Border.all(color: Colors.grey[400]),
+                      //     borderRadius: Global().borderRadius,
+                      //   ),
+                      //   child: DropdownButton(
+                      //     items: courseList
+                      //         .map((course) => DropdownMenuItem(
+                      //               value: course,
+                      //               child: Text(course),
+                      //             ))
+                      //         .toList(),
+                      //     onChanged: (value) {
+                      //       setState(() {
+                      //         subject = value;
+                      //       });
+                      //       print("$value");
+                      //     },
+                      //     hint: Text(subject ?? subjectHint),
+                      //     underline: Container(),
+                      //     isExpanded: true,
+                      //     icon: Padding(
+                      //       padding: const EdgeInsets.all(8.0),
+                      //       child: Icon(Icons.arrow_drop_down),
+                      //     ),
+                      //   ),
+                      // ),
+                      Global().height15Box,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[

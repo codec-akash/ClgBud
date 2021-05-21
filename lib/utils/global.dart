@@ -13,9 +13,10 @@ class Global {
   );
 
   TextStyle textStyle = TextStyle(
-    fontSize: 14.0,
-    fontWeight: FontWeight.bold,
-  );
+      fontSize: 14.0, fontWeight: FontWeight.bold, color: Colors.black);
+
+  TextStyle detailText = TextStyle(
+      fontSize: 14.0, fontWeight: FontWeight.w400, color: Colors.black);
 
   InputDecoration textFieldDecoration = InputDecoration(
     border: OutlineInputBorder(
@@ -28,13 +29,20 @@ class Global {
     filled: true,
   );
 
-  BorderRadiusGeometry borderRadius = BorderRadius.circular(5.0);
+  BorderRadiusGeometry borderRadius = BorderRadius.circular(10.0);
 
   BorderRadiusGeometry customBorderRadius(double r) {
     return BorderRadius.circular(r);
   }
 
-  SizedBox height10Box = SizedBox(height: 15.0);
+  SizedBox height15Box = SizedBox(height: 15.0);
+
+  SizedBox height10Box = SizedBox(height: 10.0);
+
+  Divider horizontalDivider = Divider(
+    color: Colors.grey,
+    thickness: 0.9,
+  );
 
   List<BoxShadow> boxShadow = [
     BoxShadow(

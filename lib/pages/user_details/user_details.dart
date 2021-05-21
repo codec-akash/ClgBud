@@ -103,7 +103,7 @@ class _UserDetailsState extends State<UserDetails> {
                   userData.username = value;
                 },
               ),
-              Global().height10Box,
+              Global().height15Box,
               TextFormField(
                 initialValue: userData.rollno,
                 decoration: Global()
@@ -119,7 +119,7 @@ class _UserDetailsState extends State<UserDetails> {
                   userData.rollno = value;
                 },
               ),
-              Global().height10Box,
+              Global().height15Box,
               TextFormField(
                 initialValue: userData.phoneNumber,
                 decoration: Global().textFieldDecoration.copyWith(
@@ -136,7 +136,7 @@ class _UserDetailsState extends State<UserDetails> {
                   userData.phoneNumber = "+91" + value;
                 },
               ),
-              Global().height10Box,
+              Global().height15Box,
             ],
           ),
         ),

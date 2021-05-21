@@ -6,7 +6,7 @@ ThemeData dark = ThemeData(
   primaryColor: Color(0xff94A4B4),
   accentColor: Color(0xff50C2C9),
   backgroundColor: Color(0xff94A4B4),
-  textTheme: GoogleFonts.anticSlabTextTheme(),
+  textTheme: GoogleFonts.anticSlabTextTheme().apply(displayColor: Colors.black),
 );
 
 ThemeData light = ThemeData(

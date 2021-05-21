@@ -1,6 +1,8 @@
 import 'package:clgbud/pages/home_page/drawer_screen.dart';
 import 'package:clgbud/pages/home_page/home_screen.dart';
+import 'package:clgbud/services/product_database.dart';
 import 'package:clgbud/services/user_database.dart';
+import 'package:clgbud/utils/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,6 +17,7 @@ class _HomePageState extends State<HomePage> {
     super.didChangeDependencies();
     print("ReachedDidChange");
     Provider.of<UserDataBase>(context, listen: false).saveUserData();
+    Provider.of<ProductDataBase>(context, listen: false).getDropDowns();
   }
 
   @override

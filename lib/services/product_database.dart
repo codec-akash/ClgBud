@@ -9,7 +9,15 @@ class ProductDataBase with ChangeNotifier {
   final CollectionReference prodCollection =
       FirebaseFirestore.instance.collection('products');
 
+  final CollectionReference dropCollection =
+      FirebaseFirestore.instance.collection('dropdown');
+
   List<ProductModel> _products = [];
+  List<String> _category = [];
+  List<String> _courses = [];
+
+  List<String> get course => _courses;
+  List<String> get category => _category;
 
   Stream<List<ProductModel>> get allProducts {
     return prodCollection.snapshots().map((event) => _productList(event));
@@ -61,5 +69,17 @@ class ProductDataBase with ChangeNotifier {
       print(e);
     }
     return userProduct;
+  }
+
+  void getDropDowns() async {
+    if (_courses.isEmpty) {
+      print("dropdown received");
+      DocumentSnapshot categorySnapshot =
+          await dropCollection.doc('category').get();
+      DocumentSnapshot courseSnapshot =
+          await dropCollection.doc('course').get();
+      _category = categorySnapshot.data()['name'].cast<String>();
+      _courses = courseSnapshot.data()['name'].cast<String>();
+    }
   }
 }

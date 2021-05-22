@@ -1,19 +1,60 @@
 import 'package:clgbud/model/product_model.dart';
 import 'package:clgbud/pages/add_product/add_product.dart';
+import 'package:clgbud/services/product_database.dart';
 import 'package:clgbud/utils/app_media_query.dart';
 import 'package:clgbud/utils/date_time_util.dart';
 import 'package:clgbud/utils/global.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:share/share.dart';
 
 class YourProdDetail extends StatelessWidget {
   final ProductModel productModel;
   YourProdDetail({this.productModel});
 
+  void deleteProduct(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Text("Delete Product"),
+          content: Text("Soch lo ek aur baar.."),
+          actions: [
+            CupertinoDialogAction(
+              child: Text("Yes"),
+              onPressed: () {
+                try {
+                  Provider.of<ProductDataBase>(context, listen: false)
+                      .deleteProduct(productModel.productId)
+                      .then((_) {
+                    Navigator.of(context).pop();
+                  });
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  print(e);
+                  Scaffold.of(context)
+                      .showSnackBar(SnackBar(content: Text("$e")));
+                }
+              },
+            ),
+            CupertinoDialogAction(
+              child: Text("No"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Product Details"),
+        title: Text("${productModel.productName}"),
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
@@ -56,11 +97,16 @@ class YourProdDetail extends StatelessWidget {
                         ),
                         IconButton(
                           icon: Icon(Icons.share_outlined),
-                          onPressed: () {},
+                          onPressed: () {
+                            Share.share(
+                                "HEyy Check out this product named : ${productModel.productName}");
+                          },
                         ),
                         IconButton(
                           icon: Icon(Icons.delete),
-                          onPressed: () {},
+                          onPressed: () {
+                            deleteProduct(context);
+                          },
                         ),
                       ],
                     ),

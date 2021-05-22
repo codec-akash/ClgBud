@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 class YourProdCard extends StatelessWidget {
   final ProductModel userProduct;
   YourProdCard({this.userProduct});
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

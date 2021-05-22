@@ -87,6 +87,15 @@ class ProductDataBase with ChangeNotifier {
     notifyListeners();
   }
 
+  Future deleteProduct(String productID) async {
+    try {
+      await prodCollection.doc(productID).delete();
+      _products.removeWhere((element) => element.productId == productID);
+    } catch (e) {
+      throw e;
+    }
+  }
+
   Stream<List<ProductModel>> userProd(String userID) {
     return prodCollection
         .where("user_id", isEqualTo: userID)

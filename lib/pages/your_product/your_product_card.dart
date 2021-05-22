@@ -52,7 +52,7 @@ class YourProdCard extends StatelessWidget {
                   Text(userProduct.productName),
                   if (userProduct.addedDate != null)
                     Text(
-                      "Date :: ${DateUtil().dateformatDefault(userProduct.addedDate)}",
+                      "Date :: ${DateUtil().dateformatDefault(DateTime.parse(userProduct.addedDate))}",
                       softWrap: false,
                       overflow: TextOverflow.fade,
                     ),

@@ -25,19 +25,19 @@ class ProductDataBase with ChangeNotifier {
 
   List<ProductModel> _productList(QuerySnapshot snapshot) {
     return snapshot.docs.map((product) {
-      return ProductModel.fromJson(product.data());
+      ProductModel serverProd = ProductModel.fromJson(product.data());
+      serverProd.productId = product.id;
+      return serverProd;
     }).toList();
   }
 
-  Future addProduct(
-      {ProductModel productModel, File productImage, String userId}) async {
-    print("Reached");
+  Future addProduct({ProductModel productModel, File productImage}) async {
     String imageUrl;
     try {
       final ref = FirebaseStorage.instance
           .ref()
           .child('product_image')
-          .child(userId + DateTime.now().toIso8601String() + '.jpg');
+          .child(productModel.userId + productModel.addedDate + '.jpg');
 
       await ref.putFile(productImage);
 
@@ -49,26 +49,49 @@ class ProductDataBase with ChangeNotifier {
       print(documentReference.id);
       if (documentReference.id != null) {
         productModel.productId = documentReference.id;
-
+        print(productModel.productId);
         _products.add(productModel);
       }
+      notifyListeners();
     } catch (e) {
       print(e);
     }
   }
 
-  Future<List<ProductModel>> userProducts(String userID) async {
-    List<ProductModel> userProduct = [];
+  Future updateProduct(ProductModel productModel, File productImage) async {
+    print("Update  ${productModel.productId}");
+    final prodIndex = _products
+        .indexWhere((prod) => prod.productId == productModel.productId);
+    print(prodIndex);
     try {
-      QuerySnapshot querySnapshot =
-          await prodCollection.where("user_id", isEqualTo: userID).get();
-      userProduct = querySnapshot.docs.map((e) {
-        return ProductModel.fromJson(e.data());
-      }).toList();
+      String imageUrl;
+      if (productImage != null) {
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('product_image')
+            .child(productModel.userId + productModel.addedDate + '.jpg');
+        await ref.putFile(productImage);
+
+        imageUrl = await ref.getDownloadURL();
+        productModel.productImage = imageUrl;
+      }
+      await prodCollection
+          .doc(productModel.productId)
+          .set(productModel.toJson());
+
+      _products[prodIndex] = productModel;
+      notifyListeners();
     } catch (e) {
       print(e);
+      throw Exception(e);
     }
-    return userProduct;
+  }
+
+  Stream<List<ProductModel>> userProd(String userID) {
+    return prodCollection
+        .where("user_id", isEqualTo: userID)
+        .snapshots()
+        .map((userPro) => _productList(userPro));
   }
 
   void getDropDowns() async {
@@ -80,6 +103,7 @@ class ProductDataBase with ChangeNotifier {
           await dropCollection.doc('course').get();
       _category = categorySnapshot.data()['name'].cast<String>();
       _courses = courseSnapshot.data()['name'].cast<String>();
+      notifyListeners();
     }
   }
 }

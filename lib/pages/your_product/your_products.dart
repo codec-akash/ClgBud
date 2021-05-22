@@ -19,8 +19,8 @@ class YourProducts extends StatelessWidget {
       // backgroundColor: Colors.grey[300],
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15.0),
-        child: FutureBuilder<List<ProductModel>>(
-            future: products.userProducts(user.userId),
+        child: StreamBuilder<List<ProductModel>>(
+            stream: products.userProd(user.userId),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Loading();

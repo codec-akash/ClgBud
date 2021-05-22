@@ -79,7 +79,7 @@ class YourProdDetail extends StatelessWidget {
                   children: [
                     TextSpan(
                       text:
-                          "${DateUtil().dateformatDefault(productModel.addedDate ?? DateTime.now())}",
+                          "${DateUtil().dateformatDefault(DateTime.tryParse(productModel.addedDate) ?? DateTime.now())}",
                       style: Global().detailText,
                     ),
                   ],

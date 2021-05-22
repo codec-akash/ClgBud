@@ -47,10 +47,11 @@ class YourProdDetail extends StatelessWidget {
                         IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => AddProduct(
-                                      editedProduct: productModel,
-                                    )));
+                            Navigator.of(context)
+                                .pushReplacement(MaterialPageRoute(
+                                    builder: (context) => AddProduct(
+                                          editedProduct: productModel,
+                                        )));
                           },
                         ),
                         IconButton(

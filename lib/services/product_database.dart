@@ -80,11 +80,11 @@ class ProductDataBase with ChangeNotifier {
           .set(productModel.toJson());
 
       _products[prodIndex] = productModel;
-      notifyListeners();
     } catch (e) {
       print(e);
       throw Exception(e);
     }
+    notifyListeners();
   }
 
   Stream<List<ProductModel>> userProd(String userID) {

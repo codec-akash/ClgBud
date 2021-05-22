@@ -95,7 +95,12 @@ class _AddProductState extends State<AddProduct> {
         if (widget.editedProduct != null) {
           print("Update CAlled");
           await Provider.of<ProductDataBase>(context, listen: false)
-              .updateProduct(productModel, _pickedImage);
+              .updateProduct(productModel, _pickedImage)
+              .then((_) {
+            _scaffoldKey.currentState
+                .showSnackBar(SnackBar(content: Text("Item Updated")));
+            Navigator.of(context).pop();
+          });
         } else {
           productModel.userId =
               Provider.of<UserDataBase>(context, listen: false).userId;
@@ -141,7 +146,9 @@ class _AddProductState extends State<AddProduct> {
 
   void clearData() {
     productModel = ProductModel();
-    _pickedImage = null;
+    setState(() {
+      _pickedImage = null;
+    });
     _formKey.currentState.reset();
   }
 

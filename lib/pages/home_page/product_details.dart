@@ -1,13 +1,16 @@
 import 'package:clgbud/model/product_model.dart';
 import 'package:clgbud/pages/home_page/user_profile_card.dart';
+import 'package:clgbud/services/product_database.dart';
 import 'package:clgbud/utils/global.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetails extends StatelessWidget {
   final ProductModel product;
   ProductDetails({this.product});
   @override
   Widget build(BuildContext context) {
+    final prodData = Provider.of<ProductDataBase>(context, listen: false);
     return Scaffold(
       floatingActionButton: Container(
         width: MediaQuery.of(context).size.width - 36,
@@ -75,10 +78,19 @@ class ProductDetails extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      IconButton(
-                        icon: Icon(Icons.favorite),
-                        color: Theme.of(context).accentColor,
-                        onPressed: () {},
+                      Consumer<ProductModel>(
+                        builder: (context, prod, child) {
+                          return IconButton(
+                            icon: Icon(prod.isWishlisted
+                                ? Icons.favorite
+                                : Icons.favorite_border),
+                            color: Theme.of(context).accentColor,
+                            onPressed: () {
+                              prod.toggleFavoriteStatus(prod.userId);
+                              prodData.updateWishList(product.productId);
+                            },
+                          );
+                        },
                       ),
                       IconButton(
                         icon: Icon(Icons.whatshot_sharp),

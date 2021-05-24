@@ -16,7 +16,8 @@ class ProductCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (ctx) => ProductDetails(product: product)));
+            builder: (ctx) => ChangeNotifierProvider.value(
+                value: product, child: ProductDetails(product: product))));
       },
       child: GridTile(
         child: Container(

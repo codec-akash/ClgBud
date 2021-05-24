@@ -1,12 +1,17 @@
 import 'package:clgbud/model/product_model.dart';
+import 'package:clgbud/services/product_database.dart';
+import 'package:clgbud/services/user_database.dart';
 import 'package:clgbud/utils/global.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProductCard extends StatelessWidget {
   final ProductModel product;
   ProductCard({this.product});
   @override
   Widget build(BuildContext context) {
+    final userData = Provider.of<UserDataBase>(context, listen: false);
+    final prodData = Provider.of<ProductDataBase>(context, listen: false);
     return GestureDetector(
       onTap: () {},
       child: GridTile(
@@ -43,9 +48,18 @@ class ProductCard extends StatelessWidget {
               ),
             ],
           ),
-          trailing: IconButton(
-            icon: Icon(Icons.favorite),
-            onPressed: () {},
+          trailing: Consumer<ProductModel>(
+            builder: (context, prod, _) {
+              return IconButton(
+                icon: Icon(
+                    prod.isWishlisted ? Icons.favorite : Icons.favorite_border),
+                color: Theme.of(context).accentColor,
+                onPressed: () {
+                  prod.toggleFavoriteStatus(userData.userId);
+                  prodData.updateWishList(product.productId);
+                },
+              );
+            },
           ),
         ),
       ),

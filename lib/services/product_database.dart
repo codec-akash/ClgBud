@@ -12,12 +12,43 @@ class ProductDataBase with ChangeNotifier {
   final CollectionReference dropCollection =
       FirebaseFirestore.instance.collection('dropdown');
 
+  final CollectionReference wishCollection =
+      FirebaseFirestore.instance.collection('wishlist');
+
   List<ProductModel> _products = [];
   List<String> _category = [];
   List<String> _courses = [];
+  List<String> wishListedItem = [];
 
   List<String> get course => _courses;
   List<String> get category => _category;
+
+  Future<void> getWishList(String userId) async {
+    wishCollection.doc(userId).get().then((value) {
+      if (value.data() != null) {
+        wishListedItem = value.data()['wishItem'].cast<String>();
+        notifyListeners();
+      }
+    });
+  }
+
+  void updateWishList(String productId) {
+    if (wishListedItem.contains(productId)) {
+      wishListedItem.remove(productId);
+    } else {
+      wishListedItem.add(productId);
+    }
+  }
+
+  // Stream<List<dynamic>> getWishListStream(String userId) {
+  //   return wishCollection.doc(userId).snapshots().map((event) {
+  //     if (event.data() != null) {
+  //       print(event.data()['wishItem']);
+  //       return event.data()['wishItem'];
+  //     }
+  //     return [];
+  //   });
+  // }
 
   Stream<List<ProductModel>> get allProducts {
     return prodCollection.snapshots().map((event) => _productList(event));
@@ -27,6 +58,8 @@ class ProductDataBase with ChangeNotifier {
     return snapshot.docs.map((product) {
       ProductModel serverProd = ProductModel.fromJson(product.data());
       serverProd.productId = product.id;
+      serverProd.isWishlisted =
+          wishListedItem == [] ? false : wishListedItem.contains(product.id);
       return serverProd;
     }).toList();
   }

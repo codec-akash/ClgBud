@@ -1,3 +1,4 @@
+import 'package:clgbud/model/product_model.dart';
 import 'package:clgbud/pages/add_product/add_product.dart';
 import 'package:clgbud/pages/home_page/home_page.dart';
 import 'package:clgbud/pages/login_page/login_page.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => UserDataBase()),
         ChangeNotifierProvider(create: (_) => ProductDataBase()),
+        ChangeNotifierProvider(create: (_) => ProductModel()),
       ],
       child: Consumer<ThemeNotifier>(
         builder: (context, theme, child) => MaterialApp(

@@ -1,4 +1,7 @@
-class ProductModel {
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+
+class ProductModel with ChangeNotifier {
   String productId;
   String productName;
   String productDescription;
@@ -10,6 +13,7 @@ class ProductModel {
   String addedDate;
   double amount;
   bool isSold;
+  bool isWishlisted;
 
   ProductModel({
     this.productId,
@@ -17,13 +21,50 @@ class ProductModel {
     this.productDescription,
     this.category,
     this.course,
-    // this.subject,
     this.userId,
     this.amount,
-    this.isSold,
     this.productImage,
     this.addedDate,
+    this.isSold,
+    this.isWishlisted,
   });
+
+  final CollectionReference wishCollection =
+      FirebaseFirestore.instance.collection('wishlist');
+
+  List<String> wishListArray = [];
+
+  List<String> get wishListedItems => wishListArray;
+
+  void _setWishList(bool newValue) {
+    isWishlisted = newValue;
+    notifyListeners();
+  }
+
+  Future<void> toggleFavoriteStatus(String userID) async {
+    final oldStatus = isWishlisted;
+    isWishlisted = !isWishlisted;
+
+    notifyListeners();
+    try {
+      wishCollection.doc(userID).get().then((value) {
+        if (value.data() != null) {
+          wishListArray = value.data()['wishItem'].cast<String>();
+          if (wishListArray.contains(productId)) {
+            wishListArray.remove(productId);
+          } else {
+            wishListArray.add(productId);
+          }
+        } else {
+          wishListArray.add(productId);
+        }
+        wishCollection.doc(userID).set({"wishItem": wishListArray});
+      });
+    } catch (e) {
+      _setWishList(oldStatus);
+      throw e;
+    }
+  }
 
   ProductModel.fromJson(Map<String, dynamic> json) {
     productName = json['product_name'];
@@ -31,11 +72,10 @@ class ProductModel {
     userId = json['user_id'];
     course = json['course'];
     category = json['category'];
-    // subject = json['subject'];
-    isSold = json['isSold'];
     amount = double.parse(json['amount'].toString());
     productImage = json['product_image'];
     addedDate = json['added_date'];
+    isSold = json['isSold'];
   }
 
   Map<String, dynamic> toJson() {
@@ -46,10 +86,10 @@ class ProductModel {
     data['course'] = this.course;
     data['category'] = this.category;
     // data['subject'] = this.subject;
-    data['isSold'] = this.isSold;
     data['amount'] = this.amount;
     data['product_image'] = this.productImage;
     data['added_date'] = this.addedDate;
+    data['isSold'] = this.isSold;
     return data;
   }
 }

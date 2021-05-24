@@ -12,12 +12,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool isInit = true;
   @override
   void didChangeDependencies() {
+    if (isInit) {
+      print("ReachedDidChange");
+      final userSnap = Provider.of<UserDataBase>(context, listen: false);
+      userSnap.saveUserData();
+      Provider.of<ProductDataBase>(context, listen: false).getDropDowns();
+      Provider.of<ProductDataBase>(context, listen: false)
+          .getWishList(userSnap.userId);
+    }
+    isInit = false;
     super.didChangeDependencies();
-    print("ReachedDidChange");
-    Provider.of<UserDataBase>(context, listen: false).saveUserData();
-    Provider.of<ProductDataBase>(context, listen: false).getDropDowns();
   }
 
   @override

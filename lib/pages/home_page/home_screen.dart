@@ -4,6 +4,7 @@ import 'package:clgbud/services/product_database.dart';
 import 'package:clgbud/utils/global.dart';
 import 'package:clgbud/utils/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -20,7 +21,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     setState(() {
       _isInit = false;
@@ -85,24 +85,27 @@ class _HomeScreenState extends State<HomeScreen> {
                       "Items Available For Sale",
                       style: Global().headingText,
                     ),
-                    StreamBuilder<List<ProductModel>>(
-                      stream: ProductDataBase().allProducts,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(child: Loading());
-                        }
-                        if (snapshot.hasError) {
-                          return Text("${snapshot.error}");
-                        }
-                        if (snapshot.connectionState ==
-                            ConnectionState.active) {
-                          return Expanded(
-                            child: ProductList(productList: snapshot.data),
-                          );
-                        }
-                        return Loading();
-                      },
+                    Consumer<ProductDataBase>(
+                      builder: (context, value, child) =>
+                          StreamBuilder<List<ProductModel>>(
+                        stream: value.allProducts,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(child: Loading());
+                          }
+                          if (snapshot.hasError) {
+                            return Text("${snapshot.error}");
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.active) {
+                            return Expanded(
+                              child: ProductList(productList: snapshot.data),
+                            );
+                          }
+                          return Loading();
+                        },
+                      ),
                     )
                   ],
                 ),

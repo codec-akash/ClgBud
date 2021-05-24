@@ -1,9 +1,11 @@
 import 'package:clgbud/model/product_model.dart';
 import 'package:clgbud/pages/add_product/add_product.dart';
+import 'package:clgbud/pages/your_product/interested_card.dart';
 import 'package:clgbud/services/product_database.dart';
 import 'package:clgbud/utils/app_media_query.dart';
 import 'package:clgbud/utils/date_time_util.dart';
 import 'package:clgbud/utils/global.dart';
+import 'package:clgbud/utils/loading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -164,9 +166,38 @@ class YourProdDetail extends StatelessWidget {
               Global().height15Box,
               Text(productModel.productDescription ?? "No Description Provided",
                   style: Global().detailText),
+              Text("Course :: ${productModel.course} ",
+                  style: Global().detailText),
+              Text("Category :: ${productModel.category} ",
+                  style: Global().detailText),
               Global().height10Box,
               Global().horizontalDivider,
               Text("Interested People", style: Global().headingText),
+              Global().height10Box,
+              Consumer<ProductModel>(
+                builder: (context, prod, _) {
+                  return StreamBuilder<List<String>>(
+                    stream: prod.interestedPeople,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Loading();
+                      }
+                      if (snapshot.hasError) {
+                        print("Resached ${snapshot.error}");
+                        Text("${snapshot.error}");
+                      }
+                      print("Resached");
+                      return Column(
+                        children: snapshot.data
+                            .map((e) => InterestedCard(
+                                  userID: e,
+                                ))
+                            .toList(),
+                      );
+                    },
+                  );
+                },
+              )
             ],
           ),
         ),

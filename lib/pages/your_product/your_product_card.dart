@@ -4,6 +4,7 @@ import 'package:clgbud/utils/app_media_query.dart';
 import 'package:clgbud/utils/date_time_util.dart';
 import 'package:clgbud/utils/global.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class YourProdCard extends StatelessWidget {
   final ProductModel userProduct;
@@ -16,8 +17,11 @@ class YourProdCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => YourProdDetail(
-              productModel: userProduct,
+            builder: (context) => ChangeNotifierProvider.value(
+              value: userProduct,
+              child: YourProdDetail(
+                productModel: userProduct,
+              ),
             ),
           ),
         );

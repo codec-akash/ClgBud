@@ -83,7 +83,7 @@ class ProductModel with ChangeNotifier {
     }
   }
 
-  Stream get interestedPeople {
+  Stream<List<String>> get interestedPeople {
     return interestCollection.doc(productId).snapshots().map((event) {
       if (event.data() != null) {
         interestedUserIds = event.data()['userIds'].cast<String>();

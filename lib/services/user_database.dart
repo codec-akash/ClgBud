@@ -46,6 +46,13 @@ class UserDataBase with ChangeNotifier {
     }
   }
 
+  Future<UserModel> getUserDetails(String userID) async {
+    return userCollection
+        .doc(userID)
+        .get()
+        .then((value) => UserModel.fromJson(value.data()));
+  }
+
   void logout() {
     userModel = null;
     notifyListeners();

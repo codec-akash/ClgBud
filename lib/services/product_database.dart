@@ -51,7 +51,10 @@ class ProductDataBase with ChangeNotifier {
   // }
 
   Stream<List<ProductModel>> get allProducts {
-    return prodCollection.snapshots().map((event) => _productList(event));
+    return prodCollection.snapshots().map((event) {
+      _products = _productList(event);
+      return _products;
+    });
   }
 
   List<ProductModel> _productList(QuerySnapshot snapshot) {
@@ -93,6 +96,7 @@ class ProductDataBase with ChangeNotifier {
 
   Future updateProduct(ProductModel productModel, File productImage) async {
     print("Update  ${productModel.productId}");
+    print(_products.length);
     final prodIndex = _products
         .indexWhere((prod) => prod.productId == productModel.productId);
     print(prodIndex);

@@ -1,5 +1,7 @@
+import 'package:clgbud/utils/http_exception.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Global {
   TextStyle headingText = TextStyle(
@@ -92,4 +94,41 @@ class Global {
       offset: Offset(4.0, 2.0), // shadow direction: bottom right
     )
   ];
+
+  sendSms(String phoneNumber) async {
+    var uri = "sms: $phoneNumber?body=hello%20there";
+    if (await canLaunch(uri)) {
+      await launch(uri);
+    } else {
+      print("send hrrp");
+      throw ("Not able to send sms");
+    }
+
+    // else {
+    //   var uri = 'sms:00$phoneNumber?body=hello%20there';
+    //   if (await canLaunch(uri)) {
+    //     await launch(uri);
+    //   } else {
+    //     throw 'Could not launch $uri';
+    //   }
+    // }
+  }
+
+  makeCall(String phone) async {
+    var uri = 'tel://$phone';
+    if (await canLaunch(uri)) {
+      await launch(uri);
+    } else {
+      throw HttpException("Not able to make call");
+    }
+  }
+
+  sendWhatsapp(String phone) async {
+    var uri = "https://wa.me/$phone?text=Hello";
+    if (await canLaunch(uri)) {
+      await launch(uri);
+    } else {
+      throw HttpException("Not able to send sms");
+    }
+  }
 }

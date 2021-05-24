@@ -13,7 +13,7 @@ class Global {
   );
 
   TextStyle textStyle = TextStyle(
-      fontSize: 14.0, fontWeight: FontWeight.bold, color: Colors.black);
+      fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.black);
 
   TextStyle detailText = TextStyle(
       fontSize: 14.0, fontWeight: FontWeight.w400, color: Colors.black);
@@ -71,7 +71,7 @@ class Global {
   List<BoxShadow> bottomBarShadow = [
     BoxShadow(
         color: Color.fromRGBO(0, 0, 0, 0.25),
-        blurRadius: 15.0,
+        blurRadius: 10.0,
         spreadRadius: 2.0,
         offset: Offset(15.0, 15.0))
   ];

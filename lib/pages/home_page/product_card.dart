@@ -1,4 +1,5 @@
 import 'package:clgbud/model/product_model.dart';
+import 'package:clgbud/pages/home_page/product_details.dart';
 import 'package:clgbud/services/product_database.dart';
 import 'package:clgbud/services/user_database.dart';
 import 'package:clgbud/utils/global.dart';
@@ -13,7 +14,10 @@ class ProductCard extends StatelessWidget {
     final userData = Provider.of<UserDataBase>(context, listen: false);
     final prodData = Provider.of<ProductDataBase>(context, listen: false);
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (ctx) => ProductDetails(product: product)));
+      },
       child: GridTile(
         child: Container(
           width: double.infinity,

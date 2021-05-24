@@ -32,7 +32,11 @@ class ProductModel with ChangeNotifier {
   final CollectionReference wishCollection =
       FirebaseFirestore.instance.collection('wishlist');
 
+  final CollectionReference interestCollection =
+      FirebaseFirestore.instance.collection('interested');
+
   List<String> wishListArray = [];
+  List<String> interestedUserIds = [];
 
   List<String> get wishListedItems => wishListArray;
 
@@ -59,11 +63,35 @@ class ProductModel with ChangeNotifier {
           wishListArray.add(productId);
         }
         wishCollection.doc(userID).set({"wishItem": wishListArray});
+        interestCollection.doc(productId).get().then((value) {
+          if (value.data() != null) {
+            interestedUserIds = value.data()['userIds'].cast<String>();
+            if (interestedUserIds.contains(userID)) {
+              interestedUserIds.remove(userID);
+            } else {
+              interestedUserIds.add(userID);
+            }
+          } else {
+            interestedUserIds.add(userID);
+          }
+          interestCollection.doc(productId).set({"userIds": interestedUserIds});
+        });
       });
     } catch (e) {
       _setWishList(oldStatus);
       throw e;
     }
+  }
+
+  Stream get interestedPeople {
+    return interestCollection.doc(productId).snapshots().map((event) {
+      if (event.data() != null) {
+        interestedUserIds = event.data()['userIds'].cast<String>();
+        return interestedUserIds;
+      } else {
+        return [];
+      }
+    });
   }
 
   ProductModel.fromJson(Map<String, dynamic> json) {

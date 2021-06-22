@@ -53,7 +53,7 @@ class ProductModel with ChangeNotifier {
     try {
       wishCollection.doc(userID).get().then((value) {
         if (value.data() != null) {
-          wishListArray = value.data()['wishItem'].cast<String>();
+          wishListArray = value['wishItem'].cast<String>();
           if (wishListArray.contains(productId)) {
             wishListArray.remove(productId);
           } else {
@@ -65,7 +65,7 @@ class ProductModel with ChangeNotifier {
         wishCollection.doc(userID).set({"wishItem": wishListArray});
         interestCollection.doc(productId).get().then((value) {
           if (value.data() != null) {
-            interestedUserIds = value.data()['userIds'].cast<String>();
+            interestedUserIds = value['userIds'].cast<String>();
             if (interestedUserIds.contains(userID)) {
               interestedUserIds.remove(userID);
             } else {
@@ -86,7 +86,7 @@ class ProductModel with ChangeNotifier {
   Stream<List<String>> get interestedPeople {
     return interestCollection.doc(productId).snapshots().map((event) {
       if (event.data() != null) {
-        interestedUserIds = event.data()['userIds'].cast<String>();
+        interestedUserIds = event['userIds'].cast<String>();
         return interestedUserIds;
       } else {
         return [];

@@ -26,7 +26,7 @@ class ProductDataBase with ChangeNotifier {
   Future<void> getWishList(String userId) async {
     wishCollection.doc(userId).get().then((value) {
       if (value.data() != null) {
-        wishListedItem = value.data()['wishItem'].cast<String>();
+        wishListedItem = value['wishItem'].cast<String>();
         notifyListeners();
       }
     });
@@ -147,8 +147,8 @@ class ProductDataBase with ChangeNotifier {
           await dropCollection.doc('category').get();
       DocumentSnapshot courseSnapshot =
           await dropCollection.doc('course').get();
-      _category = categorySnapshot.data()['name'].cast<String>();
-      _courses = courseSnapshot.data()['name'].cast<String>();
+      _category = categorySnapshot['name'].cast<String>();
+      _courses = courseSnapshot['name'].cast<String>();
       notifyListeners();
     }
   }
